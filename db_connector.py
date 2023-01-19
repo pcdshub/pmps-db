@@ -6,8 +6,6 @@ from models.states import States
 from models.device_states import DeviceStates
 from models.history import History
 
-from forms import DeviceSearchForm, StateSearchForm
-
 from flask import render_template, Blueprint, request, redirect, url_for, send_file
 
 from sqlalchemy.exc import IntegrityError
@@ -158,38 +156,29 @@ def device_info():
 
 @db_handler.route('/state_search_results/', methods=["POST"])
 def state_search_results():
-    state = StateSearchForm(request.form)
-    if state.validate():
-        session = Session()
-        results = []
-        state_string = state.data['search']
-        if state_string == '':
-            results = session.query(States)
-            session.close()    
-            return render_template('state_table.html', state_content=format_state(results))
-        if state.data['select'] == "Name":
-            results = session.query(States).filter(States.name.contains(state_string))
-        elif state.data['select'] == "ID":
-            results = session.query(States).filter(States.id.contains(state_string))
-        if not results:
-            session.close()    
-            return render_template('landing.html')
-        session.close()
+    state_string = request.form['state_name']
+    session = Session()
+    results = []
+    if state_string == '':
+        results = session.query(States)
+        session.close()    
+        return render_template('state_table.html', state_content=format_state(results))
+    results = session.query(States).filter(States.name.contains(state_string))
+    if not results:
+        session.close()    
+        return render_template('landing.html')
+    session.close()
     return render_template('state_table.html', state_content=format_state(results))
 
 @db_handler.route('/device_search_results/', methods=["POST"])
 def device_search_results():
-    device = DeviceSearchForm(request.form)
+    dev_string = request.form['device_name']
     session = Session()
-    dev_string = device.data['search']
     if dev_string == '':
         results = session.query(Devices)
         session.close()    
         return render_template('all_devices.html', device_content=format_device(results))
-    if device.data['select'] == "Name":
-        results = session.query(Devices).filter(Devices.name.contains(dev_string))
-    elif device.data['select'] == "ID":
-        results = session.query(Devices).filter(Devices.device_id.contains(dev_string))
+    results = session.query(Devices).filter(Devices.name.contains(dev_string))
     if not results:
         session.close()    
         return render_template('all_devices.html', device_content=format_device(results))
