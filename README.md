@@ -2,7 +2,6 @@
 
 ## Setup
 ### Dependencies
-- pip install flask-wtf
 - bootstrap(internet access unless we download ui file and store locally/point to it)
 
 ### Configuration
