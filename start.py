@@ -9,7 +9,15 @@ from base import Session, engine, Base
 from models import devices, history, states, device_states
 def main(args):
     if args.reset:
-        delete_db()
+        answer = input("CAUTION: this will delete all tables.\nContinue? (Y/N): ")
+        if answer.upper() == "Y":
+            delete_db()
+        elif answer.upper() == "N":
+            print("Exiting.")
+            return
+        else:
+            print("Unclear Input. Exiting.")
+            return
     #db_url = "sqlite:///{path_to_db}".format(path_to_db=db_path)
     create_tables()
     #delete_db()
@@ -19,23 +27,25 @@ def create_tables():
     """
     Creates all tables to be used in the pmps database.
     """
-    print("creating")
     try:
         Base.metadata.create_all(bind=engine)
     except:
         print("ERROR: Unable to create initial tables.")
+        return
+    print("Tables Created")
     return
 
 def delete_db():
     """
     Deletes all data in tables in the pmps database. 
     """
-    print("deleting")
     #Add function to delete all tables/rows
     try:
         Base.metadata.drop_all(engine)
     except exc.OperationalError as e:
-        print("Database does not exist, cannot delete tables")
+        print("ERROR: Database does not exist, cannot delete tables.")
+        return
+    print("Tables Deleted")
     return
 
 if __name__ == "__main__":

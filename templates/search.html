@@ -77,18 +77,16 @@
       <div class="col-md">
         <h5>State Search</h5>
         <form action="/state_search_results/" method="post">
-          Filter By: {{ state_form.select }} 
-          {{ render_field(state_form.search) }}
-          {{ state_form.submit }}
+          Search by name:
+          <input name="state_name" value=""></input>
         </p></form>
       </div>
       <!-- Search bar for devices-->
       <div class="col">
         <h5>Device Search</h5>
         <form action="/device_search_results/" method="post">
-          Filter By: {{ device_form.select }} 
-          {{ render_field(device_form.search) }}
-          {{ device_form.submit }}
+          Search by name:
+          <input name="device_name" value=""></input>
         </p></form>
       </div>
     </div>
