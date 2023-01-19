@@ -41,6 +41,32 @@
     </div>
   </div>
 
+  <!-- Search Bars -->
+  <div class="container border">
+    <h3>Search by Name</h3> 
+      <!-- Search bar for states -->
+    <div class="row">
+      <div class="border border-light rounded">
+        <h5>State Search</h5>
+        <form action="/state_search_results/" method="post">
+          Name (full or partial):
+          <input name="state_name" value=""></input>
+          <button class="button" name="state_submit_button" type="submit">Search</button>
+        </p></form>
+      </div>
+    </div>
+    <!-- Search bar for devices-->
+    <div class="row">
+      <div class="border border-light rounded">
+        <h5>Device Search</h5>
+        <form action="/device_search_results/" method="post">
+          Name (full or partial):
+          <input name="device_name" value=""></input>
+          <button class="button" name="dev_submit_button" type="submit">Search</button>
+        </p></form>
+      </div>
+    </div>
+  </div>
   <!-- Search by type -->
   <div class="container border">
     <form action="/states_by_group/" method="post">
@@ -69,27 +95,6 @@
         </div>
       </div>
     </form>
-  </div>
-  <!-- Search Bars -->
-  <div class="container border">
-    <!-- Search bar for states -->
-    <div class="row">
-      <div class="col-md">
-        <h5>State Search</h5>
-        <form action="/state_search_results/" method="post">
-          Search by name:
-          <input name="state_name" value=""></input>
-        </p></form>
-      </div>
-      <!-- Search bar for devices-->
-      <div class="col">
-        <h5>Device Search</h5>
-        <form action="/device_search_results/" method="post">
-          Search by name:
-          <input name="device_name" value=""></input>
-        </p></form>
-      </div>
-    </div>
   </div>
 
 {% endblock %}

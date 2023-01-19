@@ -17,6 +17,10 @@ engine = create_engine("sqlite:////path/to/db/here/pmps-db/pmps.db")
 
 *Note: You can delete and recreate tables at any time with `python start.py -r`
 
+### Other Setup
+4. Run `mkdir export` in `pmps-db` directory
+
+This is the folder where the exported plc data files will be located. If needed, this file path can be changed in the `export_by_plc()` function in the `db_connector.py` file.  
 
 ## Running
 Run the Application from the Top Level Directory with:

@@ -20,7 +20,7 @@ state_fields = ['name','beamline', 'nBeamClassRange','neVRange','nTran','nRate',
 history_titles = ["","ID","Timestamp","Name","Beamline", "nBC Range","nEV Range","NTran","NRate","Aperture Name","Y Gap", "Y Center", "X Gap", "X Center", "Damage Limit", "Pulse Energy", "Notes", "Special", "Reactive Temp", "Reactive Pressure"]
 
 
-device_titles = ["Device ID", "Name", "PLC", "Access Group"]
+device_titles = ["Device ID/States", "Name", "PLC", "Access Group"]
 
 
 ev_ranges = {"HXR":[1,1.7,2.1,2.5,3.8,4,5,7,7.5,7.7,8.9,10,11.1,12,13,13.5,14,16.9,18,20,22,24,25,25.5,26,27,28,28.5,29,30,60,90],
@@ -391,6 +391,7 @@ def format_state(states):
     session = Session()
     if not states:
         print("ERROR: No States to Format")
+        session.close()
         return {"titles":state_titles, "states":['','','']}
     try:
         if isinstance(states, list):
@@ -412,6 +413,7 @@ def format_state(states):
         state_content = {"device_name":device_name[0], "titles":state_titles, "states":states}
     except:
         state_content = {"titles":state_titles, "states":states}
+    session.close()
     return state_content
 
 def format_device(devices):
@@ -477,6 +479,7 @@ def get_devices():
 def get_device_name_from_id(device_id):
     session = Session()
     name = session.query(Devices.name).filter(Devices.device_id==device_id).one()
+    session.close()
     return name[0] if name else None
 
 def get_device_names():
