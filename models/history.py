@@ -23,7 +23,6 @@ class History(Base):
     nTran = Column(String, nullable=False)
     nRate = Column(String, nullable=False)
 
-    #TODO: is individual best for aperture?
     ap_name = Column(String, nullable=True)
     ap_ygap = Column(String, nullable=True)
     ap_ycenter = Column(String, nullable=True)

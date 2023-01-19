@@ -30,6 +30,9 @@ ev_ranges = {"HXR":[1,1.7,2.1,2.5,3.8,4,5,7,7.5,7.7,8.9,10,11.1,12,13,13.5,14,16
 
 @db_handler.route("/populate/", methods=["POST"])
 def populate_base():
+    """
+    Endpoint for populating the database with data from a file
+    """
     #Populate some base data to display in the table
     if not request.files:
         filename = "./data/combine.csv"
@@ -40,6 +43,9 @@ def populate_base():
 
 @db_handler.route("/revert/", methods=["POST"])
 def revert():
+    """
+    Endpoint for reverting history entry to be the 'current' state
+    """
     #TODO: pass device ID through here 
     revert_id = request.form["history_radio"]
     session = Session()
@@ -64,6 +70,9 @@ def export_page():
     return render_template("landing.html", plcs=get_plcs())
 
 def get_plcs():
+    """
+    Returns a list of all unique PLCS from the database
+    """
     session = Session()
     plcs = session.query(Devices.plc).distinct().all()
     session.close()
@@ -120,6 +129,9 @@ def export_states_all():
     return send_file(export_file, as_attachment=True)
 
 def get_export_data_by_device_ids(devices):
+    """
+    Returns a dictionary of device data based off a list of device objects for exporting
+    """
     export_dict = {}
     for device in devices:
         states = get_states_by_device_id(device.device_id)
@@ -385,6 +397,10 @@ def state_history():
     return render_template('history_table.html', state_content=state_content)
 
 def format_state(states):
+    """
+    Formats the state content for the UI.
+    Includes fetching the device name and accessing the table column names
+    """
     session = Session()
     if not states:
         print("ERROR: No States to Format")
@@ -408,11 +424,13 @@ def format_state(states):
                 ).one()
         state_content = {"device_name":device_name[0], "titles":state_titles, "states":states}
     except:
-        #print("broken states", states)
         state_content = {"titles":state_titles, "states":states}
     return state_content
 
 def format_device(devices):
+    """
+    Formats the device content for the UI
+    """
     device_content = {"titles":device_titles, "devices":devices}
     return device_content
 
@@ -434,6 +452,9 @@ def get_states_by_device_id(device_id=None):
     return states if states else None
 
 def get_devices_by_plc(plc):
+    """
+    Get all devices by the given PLC name 
+    """
     session = Session()
     devices = session.query(Devices).filter(Devices.plc==plc).all()
     session.close()
@@ -493,6 +514,10 @@ def get_all_device_ids():
     return device_ids if device_ids else None
 
 def get_dev_states_by_device_id(device_id=None):
+    """
+    Get a list of all device state objects. 
+    Inludes an optional device id parameter that limits results to those associated with the device id
+    """
     session = Session()
     if device_id:
         device_states = session.query(DeviceStates.state_id).filter(DeviceStates.device_id==device_id).all()
@@ -535,6 +560,12 @@ def insert_autosheet(filename):
     return
 
 def handle_state(session, state_name, state):
+    """
+    Parses and adds state entry into the database in state and history tables. 
+    
+    params: state_name(str) - device_name-state_name
+    Returns: State SQLAlchemy object
+    """
     #Swap dashes with None, clear out empty elements/strings in list
     state = ['' if sub == '-' else sub for sub in state]
     state_obj = States(name=state_name,beamline=state[0],nBeamClassRange=state[3],neVRange=state[4],nTran=state[5],nRate=state[6],ap_name=state[7],ap_ygap=state[8],ap_ycenter=state[9],ap_xgap=state[10],ap_xcenter=state[11],damage_limit=state[12],pulse_energy=state[13],notes=state[14],special=None,reactive_temp=state[15],reactive_pressure=state[16])
@@ -559,7 +590,10 @@ def handle_state(session, state_name, state):
     return state_obj if state_obj else None
 
 def add_new_state(session, state_name, state):
-    #Swap dashes with None, clear out empty elements/strings in list
+    """
+    Adds a new state into the database. Called by the UI, so processess state string differently
+    Returns: State SQLAlchemy object
+    """
     state_obj = States(name=state_name,beamline=state[1],nBeamClassRange=state[2],neVRange=state[3],nTran=state[4],nRate=state[5],ap_name=state[6],ap_ygap=state[7],ap_ycenter=state[8],ap_xgap=state[9],ap_xcenter=state[10],damage_limit=state[11],pulse_energy=state[12],notes=state[13],special=state[14],reactive_temp=state[15],reactive_pressure=state[16])
     try:
         session.add(state_obj)
@@ -582,6 +616,10 @@ def add_new_state(session, state_name, state):
     return state_obj if state_obj else None
 
 def handle_device(session, device):
+    """
+    Parses and adds a device entry into the database
+    Returns: Device SQLAlchemy object
+    """
     dev = check_device(session, device[0])
     if not dev:
         #Device Structure: name, plc, access_group, device_type
@@ -651,6 +689,7 @@ def insert_device_and_states(line, session):
         return None
     return states
 
+#Also depreciated, only called in insert_data
 def insert_state(line, session):
     #Name,ID,nBeamClassRange,neVRange,nTran,ap name,ygap,ycenter,xgap,xcenter,damage limit,pulse energy,other notes,special case,reactive temo,reactive pressure,,,,,,,,
     #Swap dashes with None, clear out empty elements/strings in list    
@@ -685,6 +724,10 @@ def insert_state(line, session):
     return
 
 def insert_device_states(device_states, session):
+    """
+    Inserts a dictionary of device_states into the database.
+    Params: device_states(dict) : {device_id:[state_id_1,state_id_2,...]}
+    """
     for device in device_states.keys():
         for state in device_states[device]:
             device_state_row = DeviceStates(device, state)
