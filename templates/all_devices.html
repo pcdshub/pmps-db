@@ -1,0 +1,38 @@
+<!-- Table that Displays all Device Information -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <form action="/new_device/">
+        <button class="rounded" name="device" type="submit">New Device</button>
+      </form>
+    </div>
+  </div>
+  <div class="row border table-responsive">
+    <form action="/new_device/" method="post">
+    <table class="table table-striped table-hover" id="states" >
+      <thead>
+        <tr>
+          {% for name in device_content["titles"] %}
+            <th>{{ name }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in device_content["devices"] %}
+          <tr>
+            <input type="hidden" name="device_id" value= "{{ row.device_id }}"></input>
+            <td><a href="{{ url_for('db_handler.device_states_display', device_id=row.device_id) }}">{{ row.device_id }}</a></td>
+            <td><text name="d_name">{{ row.name }}</td>
+            <td><text name="d_plc">{{ row.plc }}</td>
+            <td><text name="d_ag">{{ row.access_group }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </form>
+  </div>
+</div>
+{% endblock %}

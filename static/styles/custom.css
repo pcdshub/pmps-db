@@ -1,0 +1,11 @@
+/* To lock the header in place and allow the rest of the table to scroll*/
+.table-responsive{
+    max-height:600px;  
+    overflow:scroll;
+    }
+  thead tr:nth-child(1) th{
+    background:white; 
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}

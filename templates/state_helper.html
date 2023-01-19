@@ -1,0 +1,163 @@
+<!-- Singular State Edit Form -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container border">
+  {% if not new %}
+    <!-- Page Title/Information for Form-->
+    <div class="row">
+      <h4>State Name: {{ state_content['states']['name'] }}</h4>
+    </div>
+    <div class="row">
+      <div class="col-sm">
+        <h5> ID: {{ state_content['states']['id'] }}</h5>
+      </div>
+      <!-- History Selector -->
+      <div class="col-sm float-start">
+        <form action="/state_history/" method="post">
+          <input type="hidden" name="state_id" value="{{ state_content['states']['id'] }}"></input>
+          <input type="hidden" name="device_name" value="{{ state_content['device_name'] }}"></input>
+          <button class="button" name="history" type="submit">History</button>
+        </form>
+      </div>
+      <div class="col">
+        Device ID:
+      </div>
+      <div class="col">
+        <input disabled name="device_name" value="{{ state_content['device_name'] }}"></input>
+      </div>
+      <div class="col"></div>
+    <form action="/update_state/" name="update_state_form" method="post">
+  {% elif new %}
+  <form action="/update_state/" name="update_state_form" method="post">
+    <div class="row">
+      <div class="col-sm-3">
+        Adding New State for Device:
+      </div>
+      <div class="col-sm-2">
+        <select name=device_select method="post" action="/">
+          {% for device in devices %}
+            {% if device == state_content['device_name'] %}
+              <option value= "{{ device }}" SELECTED>{{ device }}</option>"
+            {% else %}
+            <option value= "{{ device }}">{{ device }}</option>"
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  {% endif %}
+  {% if message %}
+    <div class="col-xl text-end">
+      <h5 class="text-success">{{ message }}</h5>
+    </div>
+  {% endif %}
+    </div>
+<!-- State Edit Form -->
+  <div class="container">
+      <input type="hidden" name="device_name" value="{{ state_content['device_name'] }}"></input>
+      <div class="row table-responsive">
+        <table class="table table-striped border" id="states" >
+          <tbody>
+            {% if not new %}
+              <tr>
+                <td><th>{{ state_content["titles"][0] }}</th></td>
+                <td>
+                  <input type="hidden" name="s_id" value="{{ state_content['states']['id'] }}"></input>
+                <text>{{ state_content["states"]['id'] }}</text>
+                </td>
+              </tr>
+            {% elif new %}
+              <input type="hidden" name="s_id" value="None"></input>
+            {% endif %}
+            <tr>
+                <td><th>{{state_content["titles"][1]}}</th></td>
+              {% if new %}
+                <td>{{ state_content['device_name'] }}-<input type="text" name="s_name" value="{{ state_content['states']['name'] }}"></td></tr>
+              {% else %}
+                <td><input type="text" name="s_name" disabled value="{{ state_content['states']['name'] }}">
+                  <input type="text" name="s_name" hidden value="{{ state_content['states']['name'] }}">
+                </td></tr>
+              {% endif %}
+              <tr>
+                <td><th>{{state_content["titles"][2]}}</th></td>
+                <td><input type="text" name="s_beam" value="{{ state_content['states']['beamline'] }}">
+                </td></tr>
+              <tr>              
+            <tr>
+              <td><th>{{state_content["titles"][3]}}</th></td>
+              <td><input type="text" name="s_bcr" value="{{ state_content['states']['nBeamClassRange'] }}">
+              </td></tr>
+            <tr>
+              <td><th>{{state_content["titles"][4]}}</th></td>
+              <!---<select name=ev_select method="post" action="/">
+                {% for ev in ev_ranges["device_line"] %}
+                  <option value= "{{ ev }}">{{ ev }}</option>"
+                {% endfor %}-->
+              </select>             
+              <td><input type="text" name="s_nev" value="{{ state_content['states']['neVRange'] }}">
+              </td></tr>
+            <tr>
+              <td><th>{{state_content["titles"][5]}}</th></td>
+              <td><input type="text" name="s_nt" value="{{ state_content['states']['nTran'] }}">
+              </td></tr>
+            <tr>
+                <td><th>{{state_content["titles"][6]}}</th></td>
+                <td><input type="text" name="s_nr" value="{{ state_content['states']['nRate'] }}">
+                </td></tr>
+            <tr>
+              <td><th>{{state_content["titles"][7]}}</th></td>
+              <td><input type="text" name="s_as" value="{{ state_content['states']['ap_name'] }}">
+              </td></tr>
+            <tr>
+              <td><th>{{state_content["titles"][8]}}</th></td>
+              <td><input type="text" name="s_ayg" value="{{ state_content['states']['ap_ygap'] }}">
+              </td></tr>            
+            <tr>
+                <td><th>{{state_content["titles"][9]}}</th></td>
+                <td><input type="text" name="s_ayc" value="{{ state_content['states']['ap_ycenter'] }}">
+                </td></tr>
+            <tr>
+              <td><th>{{state_content["titles"][10]}}</th></td>
+              <td><input type="text" name="s_axg" value="{{ state_content['states']['ap_xgap'] }}">
+              </td></tr>
+            <tr>
+              <td><th>{{state_content["titles"][11]}}</th></td>
+              <td><input type="text" name="s_axc" value="{{ state_content['states']['ap_xcenter'] }}">
+              </td></tr>
+            <tr>
+              <td><th>{{state_content["titles"][12]}}</th></td>
+              <td><input type="text" name="s_apn" value="{{ state_content['states']['damage_limit'] }}">
+              </td></tr>
+            <tr>
+              <td><th>{{state_content["titles"][13]}}</th></td>
+              <td><input type="text" name="s_pen" value="{{ state_content['states']['pulse_energy'] }}">
+              </td></tr>
+            <tr>
+              <td><th>{{state_content["titles"][14]}}</th></td>
+              <td><input type="text" name="s_on" value="{{ state_content['states']['notes'] }}">
+              </td></tr>       
+            <tr>
+              <td><th>{{state_content["titles"][15]}}</th></td>
+              {% if state_content['states']['special'] %}
+                <td><input type="checkbox" checked name="s_sp" value="special"></input></td>
+              {% else %}
+                <td><input type="checkbox" name="s_sp" value="special"></input></td>
+              {% endif %}
+              </td></tr>     
+            <tr>
+              <td><th>{{state_content["titles"][16]}}</th></td>
+              <td><input type="text" name="s_rt" value="{{ state_content['states']['reactive_temp'] }}">
+              </td></tr>     
+            <tr>
+              <td><th>{{state_content["titles"][17]}}</th></td>
+              <td><input type="text" name="s_rp" value="{{ state_content['states']['reactive_pressure'] }}">
+              </td></tr>  
+          </tbody>
+        </table>
+      </div>
+      <button name="update_state_button" type="submit">Submit</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

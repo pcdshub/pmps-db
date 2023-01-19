@@ -1,0 +1,43 @@
+<!-- Contains Import Data Form and Export Data Functionality -->
+{% extends "base.html" %}
+{% block content %}
+  <div class="container">
+      <!-- File Selector for Data Import -->
+      <div class="row border rounded mb-3">
+        <form action="/populate/" method="post" enctype="multipart/form-data">
+          <div class="col-5">  
+            <label for="formFile" class="form-label">Add Data From File</label>
+            <input class="form-control" type="file" id="formFile" name="formFile" accept=".txt,.csv"></input>
+          </div>
+          <div class="col">
+            <button class="button rounded" name="file_submit" type="submit">Submit</button>
+          </div>
+        </form>
+      </div>
+      <div class="row border rounded">
+        <!-- Export all State Data, Show Error Message If Needed -->
+        {% if message %}
+          <h5>{{ message }}</h5>
+        {% endif %}
+        <div class="col-sm-3">
+          <h5>Download all States</h5>
+          <form action="/export_all/" method="get">
+            <button class="button rounded" name="export" type="submit">Download</button>
+          </form>
+        </div>
+        {% if plcs %}
+          <div class="col-sm-3">
+            <h5>Download one PLC</h5>
+            <form action="/export_plc/" method="post">
+              <select name=plc_select method="post" action="/">
+                {% for plc in plcs %}
+                <option value= "{{ plc }}" SELECTED>{{ plc }}</option>"
+                {% endfor %}
+              </select>
+              <button class="button rounded" name="PLC" type="submit">Export</button>
+            </form>
+          </div>
+        {% endif %}
+      </div>
+  </div>
+{% endblock %}

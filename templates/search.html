@@ -1,0 +1,97 @@
+<!-- Device and State Search & Filter Functionality -->
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Device to State Dropdown Selector-->
+  <div class="container border">
+    <div class="container">
+      <h3>Devices and States</h3> 
+      <div class="border border-light rounded">
+        <form action="/state_info/" name="device_states_form" method="post">
+          <h5>Select a Device</h5>
+          <SELECT name="device_id">
+            {% for d in devices %}
+              <OPTION value={{d[0]}} class="dropdown"> {{d[1]}}</OPTION>
+            {% endfor %}
+          </SELECT>
+          <button class="button" name="device_state_button" type="submit">Get States</button>
+        </form>
+      </div>
+    </div>
+  <!-- If a specific device is given, allow a specific state to be selected/displayed -->
+    <div class="container">
+      {% if device_id %}
+      <h4> Current Device: {{device_id}}</h4>
+      {% endif %}
+      {% if device_states %}
+        <form action="/state_info/" name="state_info_form" method="post">
+        <h5>State Names</h5>
+        <SELECT name="state_info">
+          {% if device_states|length > 1 %}
+            {% for s in device_states %}
+              <OPTION value={{s[0]}} class="dropdown">{{s[0]}}</OPTION>
+            {% endfor %}
+          {% else %}
+            <OPTION value={{device_states[0][0]}} class="dropdown">{{device_states[0][0]}}</OPTION>
+          {% endif %}
+        </SELECT>
+        <button class="button" name="state_info_button" type="submit">State Info</button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Search by type -->
+  <div class="container border">
+    <form action="/states_by_group/" method="post">
+      <h5>Select Devices By Type</h5>
+      <div class="row">
+        <div class="col-sm-3">
+          Prefix
+        </div>
+        <div class="col-sm-1"></div>        
+        <div class="col-sm-3">
+          <text>Type</text>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-3">
+          <input type="text" name="dev_pref" value="">
+        </div>
+        <div class="col-sm-1">
+          <h5> _ </h5> 
+        </div>        
+        <div class="col-sm-3">
+          <input type="text" name="dev_type" value="">
+        </div>
+        <div class="col-sm-2">
+          <button class="button" name="search_button" type="submit">Search</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <!-- Search Bars -->
+  <div class="container border">
+    <!-- Search bar for states -->
+    <div class="row">
+      <div class="col-md">
+        <h5>State Search</h5>
+        <form action="/state_search_results/" method="post">
+          Filter By: {{ state_form.select }} 
+          {{ render_field(state_form.search) }}
+          {{ state_form.submit }}
+        </p></form>
+      </div>
+      <!-- Search bar for devices-->
+      <div class="col">
+        <h5>Device Search</h5>
+        <form action="/device_search_results/" method="post">
+          Filter By: {{ device_form.select }} 
+          {{ render_field(device_form.search) }}
+          {{ device_form.submit }}
+        </p></form>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

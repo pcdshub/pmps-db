@@ -1,0 +1,68 @@
+<!-- Responsible for Showing Change History of One Specified State -->
+{% extends "base.html" %}
+
+{% block content %}
+  <!-- Identifier Information for Selected State/Device -->
+  <div class="container border mb-2">
+    <div class="row">
+      <h4>State History: </h4>
+    </div>    
+    <div class="row">
+      <div class="col-sm-1">
+        <h5>ID: {{ state_content["states"][0].state_id }} </h5>
+      </div>
+      <div class="col-sm-3">
+        <h5>Name: {{ state_content["states"][0].name }}</h5>
+      </div>
+      <div class="col"></div>
+      <div class="col-sm-3">
+        {% if state_content["device_name"] %}
+          <h6>Device ID: {{ state_content["device_name"] }}</h6> 
+        {% endif %}
+      </div>
+    </div>
+    <!-- History Table/Form for Specified State -->
+    <form action="/revert/" method="post">
+      <div class="row border table-responsive">
+        <table class="table scroll table-striped table-hover table-sm" id="states" >
+          <thead>
+            <tr class="text-center">
+              {% for name in state_content["titles"] %}
+                <th>{{ name }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody class="text-center tableBody">
+            {% for row in state_content["states"] %}
+              <tr>
+                <input type="hidden" name="s_id" value= "{{ row.id }}"></input>
+                <input type="hidden" name="device_name" value= "{{ state_content['device_name'] }}"></input>
+                <td><input class="form-check-input" type="radio" name="history_radio" value="{{row.id}}"></td>
+                <td>{{ row.id }} </td>
+                <td><text name="s_dt">{{ row.timestamp }}</td>
+                <td><text name="s_name">{{ row.name }}</td>
+                <td><text name="s_name">{{ row.beamclass }}</td>
+                <td><text name="s_bcr">{{ row.nBeamClassRange }}</td>
+                <td><text name="s_nev">{{ row.neVRange }}</td>
+                <td><text name="s_al">{{ row.nTran }}</td>
+                <td><text name="s_al">{{ row.nRate }}</td>
+                <td><text name="s_as">{{ row.ap_name }}</td>
+                <td><text name="s_ayg">{{ row.ap_ygap }}</td>
+                <td><text name="s_ayc">{{ row.ap_ycenter }}</td>
+                <td><text name="s_axg">{{ row.ap_xgap }}</td>
+                <td><text name="s_axc">{{ row.ap_xcenter }}</td>
+                <td><text name="s_th">{{ row.damage_limit }}</td>
+                <td><text name="s_epl">{{ row.pulse_energy}}</td>
+                <td><text name="s_eph">{{ row.notes }}</td>
+                <td><text name="s_sp">{{ row.special }}</td>
+                <td><text name="s_rt">{{ row.reactive_temp }}</td>
+                <td><text name="s_rp">{{ row.reactive_pressure }}</td>   
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <button class="button rounded" name="revert" id="revert" type="submit">Revert</button>
+    </form>
+  </div>
+{% endblock %}

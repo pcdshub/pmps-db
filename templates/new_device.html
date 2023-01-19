@@ -1,0 +1,38 @@
+<!-- Form to add new Device -->
+{% extends "base.html" %}
+
+<!-- TODO: Error handling for original device name -->
+{% block content %}
+<div class ="container">
+  {% if msg %}
+    <text>{{ msg }}</text>
+  {% endif %}
+</div>
+<div class="container">
+    <form action="/add_device/" name="add_device_form" method="post">
+      <div class="row table-responsive">
+        <table class="table table-striped border" id="devices" >
+          <tbody>
+            <tr>
+              <td><th>{{device_content["titles"][1]}}</th></td>
+              <td><input type="text" name="d_name" value="{{ device_content['devices'][1] }}"></td></tr>
+            <tr>
+            <tr>
+              <td><th>{{device_content["titles"][2]}}</th></td>
+              <td><select name=plc_select method="post" action="/">
+                {% for plc in plcs %}
+                <option value= "{{ plc }}" SELECTED>{{ plc }}</option>"
+                {% endfor %}
+              </select></td>
+            <tr>
+            <tr>
+              <td><th>{{device_content["titles"][3]}}</th></td>
+              <td><input type="text" name="d_ag" value="{{ device_content['devices'][3] }}"></td></tr>
+            <tr>
+          </tbody>
+        </table>
+      </div>
+      <button name="new_device_button" type="submit">Submit</button>
+    </form>
+  </div>
+{% endblock %}
