@@ -530,9 +530,10 @@ def insert_autosheet(filename):
         if commas[0]=="COMPONENT":
             continue
         #Remove "human readable" range from autosheet
-        del commas[6]
-        device = commas[0:3]
-        state = commas[2:]
+        del commas[7]
+        device = commas[0:4]
+        #split out the PLC
+        state = [commas[2]] + commas[4:]
         #If device does not exist yet in the db, create one
         dev = handle_device(session, device)
         #Something went wrong, bad line
@@ -613,7 +614,7 @@ def handle_device(session, device):
     dev = check_device(session, device[0])
     if not dev:
         #Device Structure: name, plc, access_group, device_type
-        insert_stmt = insert(Devices).values(name=device[0], plc=device[2], access_group=device[2], device_type=device[1])
+        insert_stmt = insert(Devices).values(name=device[0], plc=device[3], access_group=device[2], device_type=device[1])
         try:
             session.execute(insert_stmt)
             session.commit()
