@@ -150,9 +150,7 @@ def device_info():
     Endpoint for the device and state search/list page
     """
     devices = get_devices()
-    state = StateSearchForm(request.form)
-    device = DeviceSearchForm(request.form)
-    return render_template('search.html', state_form=state, device_form=device, devices=devices)
+    return render_template('search.html', devices=devices)
 
 @db_handler.route('/state_search_results/', methods=["POST"])
 def state_search_results():
