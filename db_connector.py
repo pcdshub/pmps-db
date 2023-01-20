@@ -253,21 +253,22 @@ def add_device():
     name = request.form['d_name']
     plc = request.form.get('plc_select')
     ag = request.form['d_ag']
+    dt = request.form['d_type']
     """    exists = check_device(name)
     if exists:
         return render_template('new_device.html', device_content=format_device((0,name, plc, ag)), msg="Device Name Already Exists")"""
     session = Session()
     try:
-        session.execute(insert(Devices).values(name=name, plc=plc, access_group=ag))
+        session.execute(insert(Devices).values(name=name, plc=plc, device_type=dt, access_group=ag))
         session.commit()
     except IntegrityError:
         print(traceback.format_exc())
         session.close()
-        return render_template('new_device.html', device_content=format_device((0,name, plc, ag)), plcs=get_plcs(), msg="Device Name Already Exists")
+        return render_template('new_device.html', device_content=format_device((0,name, plc, ag, dt)), plcs=get_plcs(), msg="Device Name Already Exists")
     except:
         print(traceback.format_exc())
         session.close()
-        return render_template('new_device.html', device_content=format_device((0,name, plc, ag)), plcs=get_plcs(), msg="Unable to Add Device")
+        return render_template('new_device.html', device_content=format_device((0,name, plc, ag, dt)), plcs=get_plcs(), msg="Unable to Add Device")
     all_devices = session.query(Devices).all()
     session.close()
     return render_template('all_devices.html', device_content=format_device(all_devices))

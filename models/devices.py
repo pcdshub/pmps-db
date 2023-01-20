@@ -15,7 +15,7 @@ class Devices(Base):
     access_group = Column(String)
     timestamp = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
 
-    def __init__(self, name, plc, access_group, device_type=None):
+    def __init__(self, name, plc, access_group, device_type):
         self.name = name
         self.plc = plc
         self.access_group = access_group
