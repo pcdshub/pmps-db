@@ -174,10 +174,10 @@ def device_search_results():
     dev_string = request.form['device_name']
     session = Session()
     if dev_string == '':
-        results = session.query(Devices)
+        results = session.query(Devices).order_by(Devices.name).all()
         session.close()    
         return render_template('all_devices.html', device_content=format_device(results))
-    results = session.query(Devices).filter(Devices.name.contains(dev_string))
+    results = session.query(Devices).filter(Devices.name.contains(dev_string)).order_by(Devices.name)
     if not results:
         session.close()    
         return render_template('all_devices.html', device_content=format_device(results))
@@ -457,7 +457,7 @@ def get_devices_by_plc(plc):
     Get all devices by the given PLC name 
     """
     session = Session()
-    devices = session.query(Devices).filter(Devices.plc==plc).all()
+    devices = session.query(Devices).filter(Devices.plc==plc).order_by(Devices.name).all()
     session.close()
     return devices if devices else None
 
@@ -484,7 +484,7 @@ def get_devices():
     Gets a list of all device ids, names, and plcs from the database
     """
     session = Session()
-    devices = session.query().with_entities(Devices.device_id, Devices.name, Devices.device_type, Devices.plc).all()
+    devices = session.query().with_entities(Devices.device_id, Devices.name, Devices.device_type, Devices.plc).order_by(Devices.name).all()
     session.close()
     return devices if devices else None
 
