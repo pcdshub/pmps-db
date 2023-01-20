@@ -10,9 +10,9 @@ from models import devices, history, states, device_states
 def main(args):
     if args.reset:
         answer = input("CAUTION: this will delete all tables.\nContinue? (Y/N): ")
-        if answer.upper() == "Y":
+        if answer.upper() in ["Y", "YES"]:
             delete_db()
-        elif answer.upper() == "N":
+        elif answer.upper() == ["N", "NO"]:
             print("Exiting.")
             return
         else:

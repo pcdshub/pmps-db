@@ -1,6 +1,6 @@
 
 from base import Session, engine, Base
-import config as CONFIG
+import config as DEFAULTS
 
 from models.devices import Devices
 from models.states import States
@@ -46,16 +46,16 @@ def revert():
 
     state_content = format_state(new_state[0])
     if "device_name" in state_content:
-        return render_template('state_helper.html', config=CONFIG,state_content=state_content, message="Reverted!")
+        return render_template('state_helper.html', config=DEFAULTS,state_content=state_content, message="Reverted!")
     try:
         state_content["device_name"] = request.form["device_name"]
     except:
         print("Device ID not available to revert")
-    return render_template('state_helper.html', config=CONFIG,state_content=state_content, message="Reverted!")
+    return render_template('state_helper.html', config=DEFAULTS,state_content=state_content, message="Reverted!")
 
 @db_handler.route("/export_page/", methods=["GET", "POST"])
 def export_page(message=None):
-    return render_template("landing.html", plcs=CONFIG.plcs, message=message)
+    return render_template("landing.html", plcs=DEFAULTS.plcs, message=message)
 
 def get_plcs():
     """
@@ -141,7 +141,7 @@ def device_info(message=None):
     Endpoint for the device and state search/list page
     """
     devices = get_devices()
-    return render_template('search.html', devices=devices, message=message)
+    return render_template('search.html', config=DEFAULTS, devices=devices, message=message)
 
 @db_handler.route('/state_search_results/', methods=["POST"])
 def state_search_results():
@@ -176,7 +176,7 @@ def device_search_results():
 
 @db_handler.route('/devices_by_type/', methods=["POST"])
 def devices_by_type():
-    device_type = request.form["device_type"]
+    device_type = request.form.get("device_type")
     session = Session()
     results = session.query(Devices).filter(Devices.device_type.like(device_type)).all()
     session.close()
@@ -257,14 +257,14 @@ def add_device():
     except IntegrityError:
         print(traceback.format_exc())
         session.close()
-        return render_template('new_device.html', config=CONFIG, device_content=format_device((0,name, plc, ag, dt)), plcs=get_plcs(), msg="Device Name Already Exists")
+        return render_template('new_device.html', config=DEFAULTS, device_content=format_device((0,name, plc, ag, dt)), plcs=get_plcs(), msg="Device Name Already Exists")
     except:
         print(traceback.format_exc())
         session.close()
-        return render_template('new_device.html', config=CONFIG, device_content=format_device((0,name, plc, ag, dt)), plcs=get_plcs(), msg="Unable to Add Device")
+        return render_template('new_device.html', config=DEFAULTS, device_content=format_device((0,name, plc, ag, dt)), plcs=get_plcs(), msg="Unable to Add Device")
     all_devices = session.query(Devices).all()
     session.close()
-    return render_template('all_devices.html', config=CONFIG, device_content=format_device(all_devices))
+    return render_template('all_devices.html', config=DEFAULTS, device_content=format_device(all_devices))
 
 def check_device(session, device_name):
     """
@@ -290,7 +290,7 @@ def update_state_db(sid, state):
     to_update = {}
     counter=0
     for state_val in state:
-        to_update[CONFIG.state_fields[counter]] = state_val
+        to_update[DEFAULTS.state_fields[counter]] = state_val
         counter+=1
     session.query(States).filter(States.id==sid).update(to_update)
     session.commit()
@@ -314,7 +314,7 @@ def device_states(device_id=None):
     """
     device_id = request.form['device_id']
     devices = get_devices()
-    return render_template('search.html', device_id=device_id, devices=devices, device_states=get_dev_states_by_device_id(device_id))
+    return render_template('search.html', config=DEFAULTS, device_id=device_id, devices=devices, device_states=get_dev_states_by_device_id(device_id))
 
 @db_handler.route("/device_states_display/", methods=["GET","POST"])
 def device_states_display(device_id=None):
@@ -337,7 +337,7 @@ def state_helper():
     """
     state_id = request.args.get('state_id')
     state_info = get_state_by_id(state_id).__dict__
-    return render_template('state_helper.html', config=CONFIG,state_content=format_state(state_info))
+    return render_template('state_helper.html', config=DEFAULTS,state_content=format_state(state_info))
 
 @db_handler.route("/single_state/", methods=["POST"])
 def single_state():
@@ -356,7 +356,7 @@ def add_state():
     #default state information
     state_content=format_state(state_info)
     state_content["device_name"] = request.args.get("device_name")
-    return render_template('state_helper.html', config=CONFIG, state_content=state_content, new=True, devices=get_device_names())  
+    return render_template('state_helper.html', config=DEFAULTS, state_content=state_content, new=True, devices=get_device_names())  
 
 @db_handler.route("/new_device/", methods=["POST", "GET"])
 def new_device():
@@ -365,7 +365,7 @@ def new_device():
     """
     device_info = ['','','']
     device_content=format_device(device_info)
-    return render_template('new_device.html', config=CONFIG, device_content=device_content)  
+    return render_template('new_device.html', config=DEFAULTS, device_content=device_content)  
 
 @db_handler.route("/state_info/", methods=["POST"])
 def state_info():
@@ -386,7 +386,7 @@ def state_history():
     Populates history table page with all history of one state
     """
     state_id = request.form["state_id"]
-    state_content = {"titles":CONFIG.history_titles, "states":get_state_history(state_id), "device_name":request.form["device_name"]}
+    state_content = {"titles":DEFAULTS.history_titles, "states":get_state_history(state_id), "device_name":request.form["device_name"]}
     return render_template('history_table.html', state_content=state_content)
 
 def format_state(states):
@@ -398,7 +398,7 @@ def format_state(states):
     if not states:
         print("ERROR: No States to Format")
         session.close()
-        return {"titles":CONFIG.state_titles, "states":['','','']}
+        return {"titles":DEFAULTS.state_titles, "states":['','','']}
     try:
         if isinstance(states, list):
             device_name = session.query(
@@ -416,9 +416,9 @@ def format_state(states):
                 ).filter(
                     DeviceStates.state_id==states['id']
                 ).one()
-        state_content = {"device_name":device_name[0], "titles":CONFIG.state_titles, "states":states}
+        state_content = {"device_name":device_name[0], "titles":DEFAULTS.state_titles, "states":states}
     except:
-        state_content = {"titles":CONFIG.state_titles, "states":states}
+        state_content = {"titles":DEFAULTS.state_titles, "states":states}
     session.close()
     return state_content
 
@@ -426,7 +426,7 @@ def format_device(devices):
     """
     Formats the device content for the UI
     """
-    device_content = {"titles":CONFIG.device_titles, "devices":devices}
+    device_content = {"titles":DEFAULTS.device_titles, "devices":devices}
     return device_content
 
 def get_states_by_device_id(device_id=None):
