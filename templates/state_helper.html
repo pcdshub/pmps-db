@@ -79,36 +79,72 @@
                   <input type="text" name="s_name" hidden value="{{ state_content['states']['name'] }}">
                 </td></tr>
               {% endif %}
-              <tr>
-                <td><th>{{state_content["titles"][2]}}</th></td>
-                <td><input type="text" name="s_beam" value="{{ state_content['states']['beamline'] }}">
-                </td></tr>
-              <tr>              
+            <tr>
+              <td><th>{{state_content["titles"][2]}}</th></td>
+              <td><select name="s_beam" method="post" action="/">
+                {% for bl in config["beamlines"] %}
+                  {% if bl == state_content['states']['beamline'] %}
+                    <option value= "{{ bl }}" SELECTED>{{ bl }}</option>"
+                  {% else %}
+                    <option value= "{{ bl }}">{{ bl }}</option>"
+                  {% endif %}
+                {% endfor %}
+              </select></td>
+            </tr>
+            <!-- Beam Class -->           
             <tr>
               <td><th>{{state_content["titles"][3]}}</th></td>
-              <td><input type="text" name="s_bcr" value="{{ state_content['states']['nBeamClassRange'] }}">
+              {% if new %}
+                <td><input type="text" name="s_bcr" value="{{ config.form_defaults['nBeamClassRange'] }}">
+              {% else %}
+                <td><input type="text" name="s_bcr" value="{{ state_content['states']['nBeamClassRange'] }}">
+              {% endif %}              
               </td></tr>
+            <!-- EV Range-->
             <tr>
               <td><th>{{state_content["titles"][4]}}</th></td>
-              <!---<select name=ev_select method="post" action="/">
-                {% for ev in ev_ranges["device_line"] %}
-                  <option value= "{{ ev }}">{{ ev }}</option>"
-                {% endfor %}-->
-              </select>             
-              <td><input type="text" name="s_nev" value="{{ state_content['states']['neVRange'] }}">
+              {% if new %}
+                <td><input type="text" name="s_nev" value="{{ config.form_defaults['neVRange'] }}">
+              {% else %}
+                <td><input type="text" name="s_nev" value="{{ state_content['states']['neVRange'] }}">
+              {% endif %}
               </td></tr>
+            <!-- NTran -->
             <tr>
               <td><th>{{state_content["titles"][5]}}</th></td>
-              <td><input type="text" name="s_nt" value="{{ state_content['states']['nTran'] }}">
+              {% if new %}
+                <td><input type="text" name="s_nt" value="{{ config.form_defaults['neVRange'] }}">
+              {% else %}
+                <td><input type="text" name="s_nt" value="{{ state_content['states']['nTran'] }}">
+              {% endif %}
               </td></tr>
+            <!-- NRate -->
             <tr>
-                <td><th>{{state_content["titles"][6]}}</th></td>
-                <td><input type="text" name="s_nr" value="{{ state_content['states']['nRate'] }}">
-                </td></tr>
+              <td><th>{{state_content["titles"][6]}}</th></td>
+              <td><select name=s_nr method="post" action="/">
+                {% for nr in config.form_defaults["nRate"] %}
+                  {% if nr == state_content['states']['nRate'] %}
+                    <option value= "{{ nr }}" SELECTED>{{ nr }}</option>"
+                  {% else %}
+                    <option value= "{{ nr }}">{{ nr }}</option>"
+                  {% endif %}
+                {% endfor %}
+              </select></td>
+            </tr>
+            <!-- Aperture Name -->
             <tr>
               <td><th>{{state_content["titles"][7]}}</th></td>
-              <td><input type="text" name="s_as" value="{{ state_content['states']['ap_name'] }}">
+              <td><select name="s_as" method="post" action="/">
+                {% for ap in config.form_defaults["aperture"] %}
+                  {% if sp == state_content['states']['ap_name'] %}
+                    <option value= "{{ ap }}" SELECTED>{{ ap }}</option>"
+                  {% else %}
+                    <option value= "{{ ap }}">{{ ap }}</option>"
+                  {% endif %}
+                {% endfor %}
+              </select></td>
               </td></tr>
+            <!-- Aperture Values -->
             <tr>
               <td><th>{{state_content["titles"][8]}}</th></td>
               <td><input type="text" name="s_ayg" value="{{ state_content['states']['ap_ygap'] }}">
@@ -125,6 +161,7 @@
               <td><th>{{state_content["titles"][11]}}</th></td>
               <td><input type="text" name="s_axc" value="{{ state_content['states']['ap_xcenter'] }}">
               </td></tr>
+            <!-- Other Data-->
             <tr>
               <td><th>{{state_content["titles"][12]}}</th></td>
               <td><input type="text" name="s_apn" value="{{ state_content['states']['damage_limit'] }}">

@@ -1,5 +1,6 @@
 
 from base import Session, engine, Base
+import config as CONFIG
 
 from models.devices import Devices
 from models.states import States
@@ -14,17 +15,6 @@ from sqlalchemy import insert
 import pprint, json, datetime, traceback
 
 db_handler = Blueprint('db_handler', __name__, template_folder='templates')
-state_titles = ["ID","Name","Beamline", "nBC Range","nEV Range","NTran","NRate", "Aperture Name","Y Gap", "Y Center", "X Gap", "X Center", "Damage Limit", "Pulse Energy", "Notes", "Special", "Reactive Temp", "Reactive Pressure"]
-state_fields = ['name','beamline', 'nBeamClassRange','neVRange','nTran','nRate','ap_name','ap_ygap', 'ap_ycenter', 'ap_xgap', 'ap_xcenter', 'damage_limit','pulse_energy','notes', 'special', 'reactive_temp', 'reactive_pressure']
-
-history_titles = ["","ID","Timestamp","Name","Beamline", "nBC Range","nEV Range","NTran","NRate","Aperture Name","Y Gap", "Y Center", "X Gap", "X Center", "Damage Limit", "Pulse Energy", "Notes", "Special", "Reactive Temp", "Reactive Pressure"]
-
-
-device_titles = ["Device ID/States", "Name", "PLC", "Device Type", "Access Group"]
-
-
-ev_ranges = {"HXR":[1,1.7,2.1,2.5,3.8,4,5,7,7.5,7.7,8.9,10,11.1,12,13,13.5,14,16.9,18,20,22,24,25,25.5,26,27,28,28.5,29,30,60,90],
- "SXR":[.1,.25,.27,.35,.4,.45,.48,.53,.68,.73,.85,1.1,1.15,1.25,1.45,1.5,1.55,1.65,1.7,1.75,1.82,1.85,2,2.2,2.5,2.8,3,3.15,3.5,4,5.3,7]}
 
 @db_handler.route("/populate/", methods=["POST"])
 def populate_base():
@@ -56,16 +46,16 @@ def revert():
 
     state_content = format_state(new_state[0])
     if "device_name" in state_content:
-        return render_template('state_helper.html', ev_ranges=ev_ranges,state_content=state_content, message="Reverted!")
+        return render_template('state_helper.html', config=CONFIG,state_content=state_content, message="Reverted!")
     try:
         state_content["device_name"] = request.form["device_name"]
     except:
         print("Device ID not available to revert")
-    return render_template('state_helper.html', ev_ranges=ev_ranges,state_content=state_content, message="Reverted!")
+    return render_template('state_helper.html', config=CONFIG,state_content=state_content, message="Reverted!")
 
 @db_handler.route("/export_page/", methods=["GET", "POST"])
 def export_page(message=None):
-    return render_template("landing.html", plcs=get_plcs(), message=message)
+    return render_template("landing.html", plcs=CONFIG.plcs, message=message)
 
 def get_plcs():
     """
@@ -227,13 +217,16 @@ def update_state():
     """
     session = Session()
     s_id = request.form['s_id']
+    #Get the device connected to the state
     device_name = request.form.get('device_select')
     if device_name == None:
         device_name = request.form['device_name']
     device_id = session.query(Devices.device_id).filter(Devices.name == device_name).one()
-    orig_state = [request.form.get('s_name'), request.form['s_beam'], request.form['s_bcr'], request.form['s_nev'], request.form['s_nt'], request.form['s_nr'], request.form['s_as'], request.form['s_ayg'],request.form['s_ayc'],request.form['s_axg'],request.form['s_axc'],request.form['s_apn'], request.form['s_pen'], request.form['s_on'], request.form.get('s_sp'), request.form['s_rt'], request.form['s_rp']]
+    #Get the state information from the form
+    orig_state = [request.form.get('s_name'), request.form.get('s_beam'), request.form['s_bcr'], request.form['s_nev'], request.form['s_nt'], request.form.get('s_nr'), request.form.get('s_as'), request.form['s_ayg'],request.form['s_ayc'],request.form['s_axg'],request.form['s_axc'],request.form['s_apn'], request.form['s_pen'], request.form['s_on'], request.form.get('s_sp'), request.form['s_rt'], request.form['s_rp']]
     if orig_state[14] == "special":
         orig_state[14] = True
+    #See if state already exists/update vs new
     state = check_state(s_id)
     if state:
         state_info = update_state_db(s_id, orig_state)
@@ -252,8 +245,8 @@ def update_state():
 def add_device():
     name = request.form['d_name']
     plc = request.form.get('plc_select')
-    ag = request.form['d_ag']
-    dt = request.form['d_type']
+    ag = request.form.get('ag_select')
+    dt = request.form.get('dtype_select')
     """    exists = check_device(name)
     if exists:
         return render_template('new_device.html', device_content=format_device((0,name, plc, ag)), msg="Device Name Already Exists")"""
@@ -264,14 +257,14 @@ def add_device():
     except IntegrityError:
         print(traceback.format_exc())
         session.close()
-        return render_template('new_device.html', device_content=format_device((0,name, plc, ag, dt)), plcs=get_plcs(), msg="Device Name Already Exists")
+        return render_template('new_device.html', config=CONFIG, device_content=format_device((0,name, plc, ag, dt)), plcs=get_plcs(), msg="Device Name Already Exists")
     except:
         print(traceback.format_exc())
         session.close()
-        return render_template('new_device.html', device_content=format_device((0,name, plc, ag, dt)), plcs=get_plcs(), msg="Unable to Add Device")
+        return render_template('new_device.html', config=CONFIG, device_content=format_device((0,name, plc, ag, dt)), plcs=get_plcs(), msg="Unable to Add Device")
     all_devices = session.query(Devices).all()
     session.close()
-    return render_template('all_devices.html', device_content=format_device(all_devices))
+    return render_template('all_devices.html', config=CONFIG, device_content=format_device(all_devices))
 
 def check_device(session, device_name):
     """
@@ -297,7 +290,7 @@ def update_state_db(sid, state):
     to_update = {}
     counter=0
     for state_val in state:
-        to_update[state_fields[counter]] = state_val
+        to_update[CONFIG.state_fields[counter]] = state_val
         counter+=1
     session.query(States).filter(States.id==sid).update(to_update)
     session.commit()
@@ -344,7 +337,7 @@ def state_helper():
     """
     state_id = request.args.get('state_id')
     state_info = get_state_by_id(state_id).__dict__
-    return render_template('state_helper.html', ev_ranges=ev_ranges,state_content=format_state(state_info))
+    return render_template('state_helper.html', config=CONFIG,state_content=format_state(state_info))
 
 @db_handler.route("/single_state/", methods=["POST"])
 def single_state():
@@ -360,10 +353,10 @@ def add_state():
     """
     Opens the view to create a new state
     """
-    state_info = ['','','']
+    #default state information
     state_content=format_state(state_info)
     state_content["device_name"] = request.args.get("device_name")
-    return render_template('state_helper.html', ev_ranges=ev_ranges,state_content=state_content, new=True, devices=get_device_names())  
+    return render_template('state_helper.html', config=CONFIG, state_content=state_content, new=True, devices=get_device_names())  
 
 @db_handler.route("/new_device/", methods=["POST", "GET"])
 def new_device():
@@ -372,7 +365,7 @@ def new_device():
     """
     device_info = ['','','']
     device_content=format_device(device_info)
-    return render_template('new_device.html', device_content=device_content, plcs=get_plcs())  
+    return render_template('new_device.html', config=CONFIG, device_content=device_content)  
 
 @db_handler.route("/state_info/", methods=["POST"])
 def state_info():
@@ -393,7 +386,7 @@ def state_history():
     Populates history table page with all history of one state
     """
     state_id = request.form["state_id"]
-    state_content = {"titles":history_titles, "states":get_state_history(state_id), "device_name":request.form["device_name"]}
+    state_content = {"titles":CONFIG.history_titles, "states":get_state_history(state_id), "device_name":request.form["device_name"]}
     return render_template('history_table.html', state_content=state_content)
 
 def format_state(states):
@@ -405,7 +398,7 @@ def format_state(states):
     if not states:
         print("ERROR: No States to Format")
         session.close()
-        return {"titles":state_titles, "states":['','','']}
+        return {"titles":CONFIG.state_titles, "states":['','','']}
     try:
         if isinstance(states, list):
             device_name = session.query(
@@ -423,9 +416,9 @@ def format_state(states):
                 ).filter(
                     DeviceStates.state_id==states['id']
                 ).one()
-        state_content = {"device_name":device_name[0], "titles":state_titles, "states":states}
+        state_content = {"device_name":device_name[0], "titles":CONFIG.state_titles, "states":states}
     except:
-        state_content = {"titles":state_titles, "states":states}
+        state_content = {"titles":CONFIG.state_titles, "states":states}
     session.close()
     return state_content
 
@@ -433,7 +426,7 @@ def format_device(devices):
     """
     Formats the device content for the UI
     """
-    device_content = {"titles":device_titles, "devices":devices}
+    device_content = {"titles":CONFIG.device_titles, "devices":devices}
     return device_content
 
 def get_states_by_device_id(device_id=None):
@@ -572,7 +565,7 @@ def handle_state(session, state_name, state):
     """
     #Swap dashes with None, clear out empty elements/strings in list
     state = ['' if sub == '-' else sub for sub in state]
-    state_obj = States(name=state_name,beamline=state[0],nBeamClassRange=state[3],neVRange=state[4],nTran=state[5],nRate=state[6],ap_name=state[7],ap_ygap=state[8],ap_ycenter=state[9],ap_xgap=state[10],ap_xcenter=state[11],damage_limit=state[12],pulse_energy=state[13],notes=state[14],special=None,reactive_temp=state[15],reactive_pressure=state[16])
+    state_obj = States(name=state_name,beamline=state[0],nBeamClassRange=state[3],neVRange=state[4],nTran=state[5],nRate=state[6],ap_name=state[7],ap_ygap=state[8],ap_ycenter=state[9],ap_xgap=state[10],ap_xcenter=state[11],damage_limit=state[12],pulse_energy=state[13],notes=state[14],special=False,reactive_temp=state[15],reactive_pressure=state[16])
     try:
         session.add(state_obj)
         session.commit()
@@ -587,7 +580,7 @@ def handle_state(session, state_name, state):
         return
     insert_hist = (
         insert(History).
-            values(state_id=state_obj.id,name=state_name,beamline=state[0],nBeamClassRange=state[3],neVRange=state[4],nTran=state[5],nRate=state[6],ap_name=state[7],ap_ygap=state[8],ap_ycenter=state[9],ap_xgap=state[10],ap_xcenter=state[11],damage_limit=state[12],pulse_energy=state[13],notes=state[14],special=None,reactive_temp=state[15],reactive_pressure=state[16])
+            values(state_id=state_obj.id,name=state_name,beamline=state[0],nBeamClassRange=state[3],neVRange=state[4],nTran=state[5],nRate=state[6],ap_name=state[7],ap_ygap=state[8],ap_ycenter=state[9],ap_xgap=state[10],ap_xcenter=state[11],damage_limit=state[12],pulse_energy=state[13],notes=state[14],special=False,reactive_temp=state[15],reactive_pressure=state[16])
         )
     session.execute(insert_hist)
     session.commit()
