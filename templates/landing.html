@@ -6,12 +6,14 @@
       <div class="row border rounded mb-3">
         <div class="col">
           <form action="/populate/" method="post" enctype="multipart/form-data">
-            <div class="col-5">  
-              <label for="formFile" class="form-label">Add Data From File</label>
-              <input class="form-control" type="file" id="formFile" name="formFile" accept=".txt,.csv"></input>
-            </div>
-            <div class="col">
-              <button class="button rounded" name="file_submit" type="submit">Submit</button>
+            <label for="formFile" class="form-label">Add Data From File</label>
+            <div class="row">
+              <div class="col-md-8">
+                <input class="form-control" type="file" id="formFile" name="formFile" accept=".txt,.csv">
+              </div>
+              <div class="col">
+                <button class="button rounded" name="file_submit" type="submit">Submit</button>
+              </div>
             </div>
           </form>
         </div>
