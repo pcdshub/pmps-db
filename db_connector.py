@@ -64,8 +64,8 @@ def revert():
     return render_template('state_helper.html', ev_ranges=ev_ranges,state_content=state_content, message="Reverted!")
 
 @db_handler.route("/export_page/", methods=["GET", "POST"])
-def export_page():
-    return render_template("landing.html", plcs=get_plcs())
+def export_page(message=None):
+    return render_template("landing.html", plcs=get_plcs(), message=message)
 
 def get_plcs():
     """
@@ -101,10 +101,11 @@ def export_by_plc():
         return render_template("landing.html", message="Export Failed - No Device Information")
     export = get_export_data_by_device_ids(devices)
     plc_export = {plc:export}
-    pprint.pprint(plc_export)
     with open(export_file, 'w') as f:
         f.write(json.dumps(plc_export))
-    return send_file(export_file, as_attachment=True)
+    #return send_file(export_file, as_attachment=True)
+    message = plc + " Export Successful!"
+    return export_page(message)
 
 @db_handler.route("/export_all/", methods=["GET"])
 def export_states_all():
