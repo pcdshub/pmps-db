@@ -27,6 +27,7 @@
             <td><a href="{{ url_for('db_handler.device_states_display', device_id=row.device_id) }}">{{ row.device_id }}</a></td>
             <td><text name="d_name">{{ row.name }}</td>
             <td><text name="d_plc">{{ row.plc }}</td>
+            <td><text name="d_type">{{ row.device_type }}</td>
             <td><text name="d_ag">{{ row.access_group }}</td>
           </tr>
         {% endfor %}

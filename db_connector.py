@@ -20,7 +20,7 @@ state_fields = ['name','beamline', 'nBeamClassRange','neVRange','nTran','nRate',
 history_titles = ["","ID","Timestamp","Name","Beamline", "nBC Range","nEV Range","NTran","NRate","Aperture Name","Y Gap", "Y Center", "X Gap", "X Center", "Damage Limit", "Pulse Energy", "Notes", "Special", "Reactive Temp", "Reactive Pressure"]
 
 
-device_titles = ["Device ID/States", "Name", "PLC", "Access Group"]
+device_titles = ["Device ID/States", "Name", "PLC", "Device Type", "Access Group"]
 
 
 ev_ranges = {"HXR":[1,1.7,2.1,2.5,3.8,4,5,7,7.5,7.7,8.9,10,11.1,12,13,13.5,14,16.9,18,20,22,24,25,25.5,26,27,28,28.5,29,30,60,90],
@@ -146,12 +146,12 @@ def get_export_data_by_device_ids(devices):
 
 
 @db_handler.route("/device_info/", methods=["GET", "POST"])
-def device_info():
+def device_info(message=None):
     """
     Endpoint for the device and state search/list page
     """
     devices = get_devices()
-    return render_template('search.html', devices=devices)
+    return render_template('search.html', devices=devices, message=message)
 
 @db_handler.route('/state_search_results/', methods=["POST"])
 def state_search_results():
@@ -183,6 +183,17 @@ def device_search_results():
         return render_template('all_devices.html', device_content=format_device(results))
     session.close()    
     return render_template('all_devices.html', device_content=format_device(results))
+
+@db_handler.route('/devices_by_type/', methods=["POST"])
+def devices_by_type():
+    device_type = request.form["device_type"]
+    session = Session()
+    results = session.query(Devices).filter(Devices.device_type.like(device_type)).all()
+    session.close()
+    if not results:
+        return device_info("No Results Found")
+    return render_template('all_devices.html', device_content=format_device(results))
+
 
 @db_handler.route("/states_by_group/", methods=["POST"])
 def states_by_group():
@@ -473,7 +484,7 @@ def get_devices():
     Gets a list of all device ids, names, and plcs from the database
     """
     session = Session()
-    devices = session.query().with_entities(Devices.device_id, Devices.name, Devices.plc).all()
+    devices = session.query().with_entities(Devices.device_id, Devices.name, Devices.device_type, Devices.plc).all()
     session.close()
     return devices if devices else None
 
