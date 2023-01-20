@@ -113,9 +113,9 @@
             <tr>
               <td><th>{{state_content["titles"][5]}}</th></td>
               {% if new %}
-                <td><input type="text" name="s_nt" value="{{ config.form_defaults['neVRange'] }}">
+                <td><input type="text" name="s_nt" value="{{ config.form_defaults['nTran'] }}">   Note: 1 is full transmission
               {% else %}
-                <td><input type="text" name="s_nt" value="{{ state_content['states']['nTran'] }}">
+                <td><input type="text" name="s_nt" value="{{ state_content['states']['nTran'] }}">    Note: 1 is full transmission
               {% endif %}
               </td></tr>
             <!-- NRate -->
@@ -124,12 +124,12 @@
               <td><select name=s_nr method="post" action="/">
                 {% for nr in config.form_defaults["nRate"] %}
                   {% if nr == state_content['states']['nRate'] %}
-                    <option value= "{{ nr }}" SELECTED>{{ nr }}</option>"
+                    <option value= "{{ nr }}" SELECTED>{{ nr }}</option>
                   {% else %}
-                    <option value= "{{ nr }}">{{ nr }}</option>"
+                    <option value= "{{ nr }}">{{ nr }}</option>
                   {% endif %}
                 {% endfor %}
-              </select></td>
+              </select> Hz</td>
             </tr>
             <!-- Aperture Name -->
             <tr>
@@ -137,9 +137,9 @@
               <td><select name="s_as" method="post" action="/">
                 {% for ap in config.form_defaults["aperture"] %}
                   {% if sp == state_content['states']['ap_name'] %}
-                    <option value= "{{ ap }}" SELECTED>{{ ap }}</option>"
+                    <option value= "{{ ap }}" SELECTED>{{ ap }}</option> 
                   {% else %}
-                    <option value= "{{ ap }}">{{ ap }}</option>"
+                    <option value= "{{ ap }}">{{ ap }}</option>
                   {% endif %}
                 {% endfor %}
               </select></td>
@@ -147,19 +147,19 @@
             <!-- Aperture Values -->
             <tr>
               <td><th>{{state_content["titles"][8]}}</th></td>
-              <td><input type="text" name="s_ayg" value="{{ state_content['states']['ap_ygap'] }}">
+              <td><input type="text" name="s_ayg" value="{{ state_content['states']['ap_ygap'] }}"> mm
               </td></tr>            
             <tr>
                 <td><th>{{state_content["titles"][9]}}</th></td>
-                <td><input type="text" name="s_ayc" value="{{ state_content['states']['ap_ycenter'] }}">
+                <td><input type="text" name="s_ayc" value="{{ state_content['states']['ap_ycenter'] }}"> mm
                 </td></tr>
             <tr>
               <td><th>{{state_content["titles"][10]}}</th></td>
-              <td><input type="text" name="s_axg" value="{{ state_content['states']['ap_xgap'] }}">
+              <td><input type="text" name="s_axg" value="{{ state_content['states']['ap_xgap'] }}"> mm
               </td></tr>
             <tr>
               <td><th>{{state_content["titles"][11]}}</th></td>
-              <td><input type="text" name="s_axc" value="{{ state_content['states']['ap_xcenter'] }}">
+              <td><input type="text" name="s_axc" value="{{ state_content['states']['ap_xcenter'] }}"> mm
               </td></tr>
             <!-- Other Data-->
             <tr>
