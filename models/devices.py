@@ -10,9 +10,9 @@ class Devices(Base):
     __tablename__ = 'devices'
     device_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
-    device_type = Column(String, nullable=True)
-    plc = Column(String)    
-    access_group = Column(String)
+    device_type = Column(String, nullable=False)
+    plc = Column(String, nullable=False)    
+    access_group = Column(String, nullable=False)
     timestamp = Column(DateTime, default=datetime.datetime.utcnow, nullable=False)
 
     def __init__(self, name, plc, access_group, device_type):

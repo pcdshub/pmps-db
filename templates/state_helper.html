@@ -75,7 +75,9 @@
               {% if new %}
                 <td>{{ state_content['device_name'] }}-<input type="text" name="s_name" value="{{ state_content['states']['name'] }}"></td></tr>
               {% else %}
-                <td><input type="text" name="s_name" disabled value="{{ state_content['states']['name'] }}">
+                <td><input type="text" name="s_name" value="{{ state_content['states']['name'] }}">
+
+                <!--<td><input type="text" name="s_name" disabled value="{{ state_content['states']['name'] }}">-->
                   <input type="text" name="s_name" hidden value="{{ state_content['states']['name'] }}">
                 </td></tr>
               {% endif %}
