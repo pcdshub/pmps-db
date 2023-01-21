@@ -76,7 +76,6 @@
                 <td>{{ state_content['device_name'] }}-<input type="text" name="s_name" value="{{ state_content['states']['name'] }}"></td></tr>
               {% else %}
                 <td><input type="text" name="s_name" value="{{ state_content['states']['name'] }}">
-
                 <!--<td><input type="text" name="s_name" disabled value="{{ state_content['states']['name'] }}">-->
                   <input type="text" name="s_name" hidden value="{{ state_content['states']['name'] }}">
                 </td></tr>
@@ -179,11 +178,12 @@
             <tr>
               <td><th>{{state_content["titles"][15]}}</th></td>
               {% if state_content['states']['special'] %}
-                <td><input type="checkbox" checked name="s_sp" value="special"></input></td>
+                <td><input type="checkbox" checked name="s_sp" value="special"></input>
               {% else %}
-                <td><input type="checkbox" name="s_sp" value="special"></input></td>
+                <td><input type="checkbox" name="s_sp" value="special"></input>
               {% endif %}
-              </td></tr>     
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note: Select if edge case, include reasoning in notes field</td>
+            </tr>     
             <tr>
               <td><th>{{state_content["titles"][16]}}</th></td>
               <td><input type="text" name="s_rt" value="{{ state_content['states']['reactive_temp'] }}">
