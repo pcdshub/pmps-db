@@ -17,10 +17,10 @@ class States(Base):
     name = Column(String, nullable=False)
     beamline = Column(String, nullable=False)
     #Usually a bitmask
-    nBeamClassRange = Column(String, nullable=False)
-    neVRange = Column(String, nullable=False)
-    nTran = Column(String, nullable=False)
-    nRate = Column(String, nullable=False)
+    nBeamClassRange = Column(String)
+    neVRange = Column(String)
+    nTran = Column(String)
+    nRate = Column(String)
 
     ap_name = Column(String, nullable=True)
     ap_ygap = Column(String, nullable=True)
@@ -32,7 +32,7 @@ class States(Base):
     pulse_energy = Column(String, nullable=True)
     notes = Column(String, nullable=True)
 
-    special = Column(Boolean)
+    special = Column(Boolean, default=False)
     reactive_temp = Column(String, nullable=True)
     reactive_pressure = Column(String, nullable=True)
 

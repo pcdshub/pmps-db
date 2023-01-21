@@ -15,23 +15,43 @@
           <tbody>
             <tr>
               <td><th>{{device_content["titles"][1]}}</th></td>
-              <td><input type="text" name="d_name" value="{{ device_content['devices'][1] }}"></td></tr>
-            <tr>
+              <td><input type="text" name="d_name" value="{{ device_content['devices'][1] }}"></td>
+            </tr>
             <tr>
               <td><th>{{device_content["titles"][2]}}</th></td>
-              <td><select name=plc_select method="post" action="/">
-                {% for plc in plcs %}
-                <option value= "{{ plc }}" SELECTED>{{ plc }}</option>"
+              <td><select name="plc_select" method="post" action="/">
+                {% for plc in config["plcs"] %}
+                  {% if plc == device_content['devices'][2] %}
+                    <option value= "{{ plc }}" SELECTED>{{ plc }}</option>"
+                  {% else %}
+                    <option value= "{{ plc }}">{{ plc }}</option>"
+                  {% endif %}
                 {% endfor %}
               </select></td>
-            <tr>
+            </tr>
             <tr>
               <td><th>{{device_content["titles"][3]}}</th></td>
-              <td><input type="text" name="d_type" value="{{ device_content['devices'][3] }}"></td></tr>
-            <tr>
+              <td><select name="dtype_select" method="post" action="/">
+                {% for dev_type in config["device_types"] %}
+                  {% if dev_type == device_content['devices'][3] %}
+                    <option value= "{{ dev_type }}" SELECTED>{{ dev_type }}</option>"
+                  {% else %}
+                    <option value= "{{ dev_type }}">{{ dev_type }}</option>"
+                  {% endif %}
+                {% endfor %}
+              </select></td>            
+            </tr>
             <tr>
               <td><th>{{device_content["titles"][4]}}</th></td>
-              <td><input type="text" name="d_ag" value="{{ device_content['devices'][4] }}"></td></tr>
+              <td><select name="ag_select" method="post" action="/">
+                {% for ag in config["access_groups"] %}
+                  {% if ag == device_content['devices'[4]] %}
+                    <option value= "{{ ag }}" SELECTED>{{ ag }}</option>"
+                  {% else %}
+                    <option value= "{{ ag }}">{{ ag }}</option>"
+                  {% endif %}
+                {% endfor %}
+              </select></td>    
             <tr>
           </tbody>
         </table>

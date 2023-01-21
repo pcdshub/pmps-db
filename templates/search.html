@@ -91,14 +91,18 @@
   </div>
   <!-- Search by type -->
   <div class="container border">
-    <h3>Search By Device Type</h5>
+    <h3>Search by Device Type</h5>
     <form action="/devices_by_type/" method="post">
       <div class="row">
         <div class="col-sm-2">
           Type:
         </div>
         <div class="col-sm-2">
-          <input name="device_type" value=""></input>
+          <select name="device_type" method="post" action="/">
+            {% for dt in config["device_types"] %}
+              <option value= "{{ dt }}">{{ dt }}</option>
+            {% endfor %}
+          </select>
         </div>
         <div class="col">
           <button class="button" name="type_submit_button" type="submit">Search</button>
