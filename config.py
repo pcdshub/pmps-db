@@ -1,5 +1,5 @@
 form_defaults = {
-    "nTran":"0",
+    "nTran":"1",
     "nRate": ["0","1","10","120"],
     "aperture": ["--", "SL1K0", "SL2K0"],
     "nBeamClassRange": "0000000000000000",
