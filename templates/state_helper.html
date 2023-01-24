@@ -137,7 +137,7 @@
               <td><th>{{state_content["titles"][7]}}</th></td>
               <td><select name="s_as" method="post" action="/">
                 {% for ap in config.form_defaults["aperture"] %}
-                  {% if sp == state_content['states']['ap_name'] %}
+                  {% if ap == state_content['states']['ap_name'] %}
                     <option value= "{{ ap }}" SELECTED>{{ ap }}</option> 
                   {% else %}
                     <option value= "{{ ap }}">{{ ap }}</option>
