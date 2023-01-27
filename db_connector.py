@@ -222,11 +222,35 @@ def update_state():
     if device_name == None:
         device_name = request.form['device_name']
     device_id = session.query(Devices.device_id).filter(Devices.name == device_name).one()
+
     #Get the state information from the form
-    orig_state = [request.form.get('s_name'), request.form.get('s_beam'), request.form['s_bcr'], request.form['s_nev'], request.form['s_nt'], request.form.get('s_nr'), request.form.get('s_as'), request.form['s_ayg'],request.form['s_ayc'],request.form['s_axg'],request.form['s_axc'],request.form['s_apn'], request.form['s_pen'], request.form['s_on'], request.form.get('s_sp'), request.form['s_rt'], request.form['s_rp']]
+    ev_ranges, beam_classes = '', ''
+    #Get the EV Ranges
+    print("*******$*$*$**$*$**$*$**$*$")
+    for ind in range(len(CONSTANTS.form_defaults["neVRange"])):
+        form_value = request.form.get('ev-'+str(ind)+'-val')
+        #If the checkbox is marked as 'checked', the val is one. Set in state_helper.html
+        if form_value != "1":
+            ev_ranges += "0"
+        else:
+            ev_ranges += "1"        
+    print(ev_ranges)    
+    #Get the Beam classes
+    for ind in range(len(CONSTANTS.form_defaults["nBeamClassRange"])):
+        form_value = request.form.get('bc-'+str(ind)+'-val')
+        #If the checkbox is marked as 'checked', the val is one. Set in state_helper.html
+        if form_value != "1":
+            beam_classes += "0"
+        else:
+            beam_classes += "1"
+    print(beam_classes)    
+    #Get Everything Else, and put it together
+    orig_state = [request.form.get('s_name'), request.form.get('s_beam'), beam_classes, ev_ranges, request.form['s_nt'], request.form.get('s_nr'), request.form.get('s_as'), request.form['s_ayg'],request.form['s_ayc'],request.form['s_axg'],request.form['s_axc'],request.form['s_apn'], request.form['s_pen'], request.form['s_on'], request.form.get('s_sp'), request.form['s_rt'], request.form['s_rp']]
+    #Set Special Tag
     if orig_state[14] == "special":
         orig_state[14] = True
-    #See if state already exists/update vs new
+
+    #See if state already exists/update vs new and update it
     state = check_state(s_id)
     if state:
         state_info = update_state_db(s_id, orig_state)

@@ -95,39 +95,41 @@
             <!-- Beam Class -->           
             <tr>
               <td><th>{{state_content["titles"][3]}}</th></td>
-              <!--{% if new %}
-                <td><input type="text" name="s_bcr" value="{{ config.form_defaults['nBeamClassRange'] }}">
-              {% else %}
-                <td><input type="text" name="s_bcr" value="{{ state_content['states']['nBeamClassRange'] }}">
-              {% endif %}              
-              </td></tr>-->
               <!-- Beam Class Checkboxes -->
               <td><div class="row g-0">
-                {% for ind in range(state_content['states']['nBeamClassRange']|length) %}
-                  <div class="col">
-                    <input type="checkbox" class="btn-check" id="bc-{{ ind }}" {{ "checked" if state_content['states']['nBeamClassRange'][ind]=="1" }} autocomplete="off">
+                <div class="col">
+                {% if new %}
+                  {% for ind in range(config.form_defaults['nBeamClassRange']|length) %}
+                    <input type="checkbox" class="btn-check" value="1" name="bc-{{ ind }}-val" id="bc-{{ ind }}" {{ "checked" if config.form_defaults['nBeamClassRange'][ind]=="1" }} autocomplete="off" >
                     <label class="btn-color btn" for="bc-{{ ind }}"></label>
-                  </div>
-                {% endfor %}
-              </td>
+                  {% endfor %}
+                {% else %}
+                  {% for ind in range(config.form_defaults['nBeamClassRange']|length) %}
+                      <input type="checkbox" class="btn-check" value="1" name="bc-{{ ind }}-val" id="bc-{{ ind }}" {{ "checked" if state_content['states']['nBeamClassRange'][ind]=="1" }} autocomplete="off" >
+                      <label class="btn-color btn" for="bc-{{ ind }}"></label>
+                  {% endfor %}
+                {% endif %}
+                </div>
+              </div></td>
             </tr>
             <!-- EV Range-->
             <tr>
               <td><th>{{state_content["titles"][4]}}</th></td>
-              <!--{% if new %}
-                <td><input type="text" name="s_nev" value="{{ config.form_defaults['neVRange'] }}">
-              {% else %}
-                <td><input type="text" name="s_nev" value="{{ state_content['states']['neVRange'] }}">
-              {% endif %}
-              </td></tr>-->
               <!-- EV Range Checkboxes -->
               <td><div class="row g-0">
-                {% for ind in range(state_content['states']['neVRange']|length) %}
-                  <div class="col">
-                    <input type="checkbox" class="btn-check" id="ev-{{ ind }}" {{ "checked" if state_content['states']['neVRange'][ind]=="1" }} autocomplete="off">
+                <div class="col">
+                  {% if new %}
+                    {% for ind in range(config.form_defaults['neVRange']|length) %}
+                    <input type="checkbox" class="btn-check" value="1" name="ev-{{ ind }}-val" id="ev-{{ ind }}" {{ "checked" if config.form_defaults['neVRange'][ind]=="1" }} autocomplete="off" />
                     <label class="btn-color btn" for="ev-{{ ind }}"></label>
-                  </div>
-                {% endfor %}
+                    {% endfor %}
+                  {% else %}
+                    {% for ind in range(config.form_defaults['neVRange']|length) %}
+                      <input type="checkbox" class="btn-check" value="1" name="ev-{{ ind }}-val" id="ev-{{ ind }}" {{ "checked" if state_content['states']['neVRange'][ind]=="1" }} autocomplete="off" />
+                      <label class="btn-color btn" for="ev-{{ ind }}"></label>
+                    {% endfor %}
+                  {% endif %}
+                </div>
               </td>
             </tr>
             <!-- NTran -->
