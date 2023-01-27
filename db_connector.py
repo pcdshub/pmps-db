@@ -226,7 +226,6 @@ def update_state():
     #Get the state information from the form
     ev_ranges, beam_classes = '', ''
     #Get the EV Ranges
-    print("*******$*$*$**$*$**$*$**$*$")
     for ind in range(len(CONSTANTS.form_defaults["neVRange"])):
         form_value = request.form.get('ev-'+str(ind)+'-val')
         #If the checkbox is marked as 'checked', the val is one. Set in state_helper.html
@@ -234,7 +233,6 @@ def update_state():
             ev_ranges += "0"
         else:
             ev_ranges += "1"        
-    print(ev_ranges)    
     #Get the Beam classes
     for ind in range(len(CONSTANTS.form_defaults["nBeamClassRange"])):
         form_value = request.form.get('bc-'+str(ind)+'-val')
@@ -243,7 +241,6 @@ def update_state():
             beam_classes += "0"
         else:
             beam_classes += "1"
-    print(beam_classes)    
     #Get Everything Else, and put it together
     orig_state = [request.form.get('s_name'), request.form.get('s_beam'), beam_classes, ev_ranges, request.form['s_nt'], request.form.get('s_nr'), request.form.get('s_as'), request.form['s_ayg'],request.form['s_ayc'],request.form['s_axg'],request.form['s_axc'],request.form['s_apn'], request.form['s_pen'], request.form['s_on'], request.form.get('s_sp'), request.form['s_rt'], request.form['s_rp']]
     #Set Special Tag

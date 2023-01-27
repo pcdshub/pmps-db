@@ -99,14 +99,14 @@
               <td><div class="row g-0">
                 <div class="col">
                 {% if new %}
-                  {% for ind in range(config.form_defaults['nBeamClassRange']|length) %}
-                    <input type="checkbox" class="btn-check" value="1" name="bc-{{ ind }}-val" id="bc-{{ ind }}" {{ "checked" if config.form_defaults['nBeamClassRange'][ind]=="1" }} autocomplete="off" >
-                    <label class="btn-color btn" for="bc-{{ ind }}"></label>
+                  {% for bc_value in config.form_defaults['nBeamClassRange'] %}
+                    <input type="checkbox" class="btn-check" value="1" name="bc-{{ loop.index0 }}-val" id="bc-{{ loop.index0 }}" {{ "checked" if bc_value=="1" }} autocomplete="off" >
+                    <label class="btn-color btn" for="bc-{{ loop.index0 }}"></label>
                   {% endfor %}
                 {% else %}
-                  {% for ind in range(config.form_defaults['nBeamClassRange']|length) %}
-                      <input type="checkbox" class="btn-check" value="1" name="bc-{{ ind }}-val" id="bc-{{ ind }}" {{ "checked" if state_content['states']['nBeamClassRange'][ind]=="1" }} autocomplete="off" >
-                      <label class="btn-color btn" for="bc-{{ ind }}"></label>
+                  {% for bc_value in state_content['states']['nBeamClassRange'] %}
+                      <input type="checkbox" class="btn-check" value="1" name="bc-{{ loop.index0 }}-val" id="bc-{{ loop.index0 }}" {{ "checked" if bc_value=="1" }} autocomplete="off" >
+                      <label class="btn-color btn" for="bc-{{ loop.index0 }}">{{ loop.index0 }}</label>
                   {% endfor %}
                 {% endif %}
                 </div>
@@ -119,14 +119,14 @@
               <td><div class="row g-0">
                 <div class="col">
                   {% if new %}
-                    {% for ind in range(config.form_defaults['neVRange']|length) %}
-                    <input type="checkbox" class="btn-check" value="1" name="ev-{{ ind }}-val" id="ev-{{ ind }}" {{ "checked" if config.form_defaults['neVRange'][ind]=="1" }} autocomplete="off" />
-                    <label class="btn-color btn" for="ev-{{ ind }}"></label>
+                    {% for ev_value in config.form_defaults['neVRange'] %}
+                    <input type="checkbox" class="btn-check" value="1" name="ev-{{ loop.index0 }}-val" id="ev-{{ loop.index0 }}" {{ "checked" if ev_value=="1" }} autocomplete="off" />
+                    <label class="btn-color btn" for="ev-{{ loop.index0 }}"></label>
                     {% endfor %}
                   {% else %}
-                    {% for ind in range(config.form_defaults['neVRange']|length) %}
-                      <input type="checkbox" class="btn-check" value="1" name="ev-{{ ind }}-val" id="ev-{{ ind }}" {{ "checked" if state_content['states']['neVRange'][ind]=="1" }} autocomplete="off" />
-                      <label class="btn-color btn" for="ev-{{ ind }}"></label>
+                    {% for ev_value in state_content['states']['neVRange'] %}
+                        <input type="checkbox" class="btn-check" value="1" name="ev-{{ loop.index0 }}-val" id="ev-{{ loop.index0 }}" {{ "checked" if ev_value=="1" }} autocomplete="off" />
+                        <label class="btn-color btn" for="ev-{{ loop.index0 }}"></label>
                     {% endfor %}
                   {% endif %}
                 </div>
