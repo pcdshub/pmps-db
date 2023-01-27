@@ -9,3 +9,15 @@
     top: 0;
     z-index: 10;
 }
+
+/* Class for beamclass/evrange selector */
+/* Unchecked */
+.btn-check+.btn-color{
+  background-color: #9aa0a3 !important;
+  color: white;
+}
+/* Checked */
+.btn-check:checked+.btn-color{
+  background-color: #065936 !important;
+  color: white;
+}
