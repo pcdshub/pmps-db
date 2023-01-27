@@ -101,69 +101,15 @@
                 <td><input type="text" name="s_bcr" value="{{ state_content['states']['nBeamClassRange'] }}">
               {% endif %}              
               </td></tr>-->
-              <!-- Selector Test -->
+              <!-- Beam Class Checkboxes -->
               <td><div class="row g-0">
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="bc-1" autocomplete="off">
-                  <label class="btn-color btn" for="bc-1"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="bc-2" autocomplete="off">
-                  <label class="btn-color btn" for="bc-2"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="bc-3" autocomplete="off">
-                  <label class="btn-color btn" for="bc-3"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="bc-4" autocomplete="off">
-                  <label class="btn-color btn" for="bc-4"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="bc-5" autocomplete="off">
-                  <label class="btn-color btn" for="bc-5"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="bc-6" autocomplete="off">
-                  <label class="btn-color btn" for="bc-6"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="bc-7" autocomplete="off">
-                  <label class="btn-color btn" for="bc-7"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="bc-8" autocomplete="off">
-                  <label class="btn-color btn" for="bc-8"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="bc-9"autocomplete="off">
-                  <label class="btn-color btn" for="bc-9"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="bc-10" autocomplete="off">
-                  <label class="btn-color btn" for="bc-10"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="bc-11" autocomplete="off">
-                  <label class="btn-color btn" for="bc-11"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="bc-12" autocomplete="off">
-                  <label class="btn-color btn" for="bc-12"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="bc-13" autocomplete="off">
-                  <label class="btn-color btn" for="bc-13"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="bc-14" autocomplete="off">
-                  <label class="btn-color btn" for="bc-14"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="bc-15" autocomplete="off">
-                  <label class="btn-color btn" for="bc-15"></label>
-                </div>
-              </div></td>
+                {% for ind in range(state_content['states']['nBeamClassRange']|length) %}
+                  <div class="col">
+                    <input type="checkbox" class="btn-check" id="bc-{{ ind }}" {{ "checked" if state_content['states']['nBeamClassRange'][ind]=="1" }} autocomplete="off">
+                    <label class="btn-color btn" for="bc-{{ ind }}"></label>
+                  </div>
+                {% endfor %}
+              </td>
             </tr>
             <!-- EV Range-->
             <tr>
@@ -174,136 +120,15 @@
                 <td><input type="text" name="s_nev" value="{{ state_content['states']['neVRange'] }}">
               {% endif %}
               </td></tr>-->
+              <!-- EV Range Checkboxes -->
               <td><div class="row g-0">
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-1" autocomplete="off">
-                  <label class="btn-color btn" for="ev-1"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-2" autocomplete="off">
-                  <label class="btn-color btn" for="ev-2"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-3" autocomplete="off">
-                  <label class="btn-color btn" for="ev-3"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-4" autocomplete="off">
-                  <label class="btn-color btn" for="ev-4"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-5" autocomplete="off">
-                  <label class="btn-color btn" for="ev-5"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-6" autocomplete="off">
-                  <label class="btn-color btn" for="ev-6"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-7" autocomplete="off">
-                  <label class="btn-color btn" for="ev-7"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-8" autocomplete="off">
-                  <label class="btn-color btn" for="ev-8"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-9"autocomplete="off">
-                  <label class="btn-color btn" for="ev-9"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-10" autocomplete="off">
-                  <label class="btn-color btn" for="ev-10"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-11" autocomplete="off">
-                  <label class="btn-color btn" for="ev-11"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-12" autocomplete="off">
-                  <label class="btn-color btn" for="ev-12"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-13" autocomplete="off">
-                  <label class="btn-color btn" for="ev-13"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-14" autocomplete="off">
-                  <label class="btn-color btn" for="ev-14"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-15" autocomplete="off">
-                  <label class="btn-color btn" for="ev-15"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-16" checked autocomplete="off">
-                  <label class="btn-color btn" for="ev-16"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-17" autocomplete="off">
-                  <label class="btn-color btn" for="ev-17"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-18" autocomplete="off">
-                  <label class="btn-color btn" for="ev-18"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-19" autocomplete="off">
-                  <label class="btn-color btn" for="ev-19"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-20" autocomplete="off">
-                  <label class="btn-color btn" for="ev-20"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-21" autocomplete="off">
-                  <label class="btn-color btn" for="ev-21"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-22" autocomplete="off">
-                  <label class="btn-color btn" for="ev-22"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-23" autocomplete="off">
-                  <label class="btn-color btn" for="ev-23"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-24"autocomplete="off">
-                  <label class="btn-color btn" for="ev-24"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-25" autocomplete="off">
-                  <label class="btn-color btn" for="ev-25"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-26" autocomplete="off">
-                  <label class="btn-color btn" for="ev-26"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-27" autocomplete="off">
-                  <label class="btn-color btn" for="ev-27"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-28" autocomplete="off">
-                  <label class="btn-color btn" for="ev-28"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-29" autocomplete="off">
-                  <label class="btn-color btn" for="ev-29"> </label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-30" autocomplete="off">
-                  <label class="btn-color btn" for="ev-30"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-31" autocomplete="off">
-                  <label class="btn-color btn" for="ev-31"></label>
-                </div>
-                <div class="col">
-                  <input type="checkbox" class="btn-check" id="ev-32" autocomplete="off">
-                  <label class="btn-color btn" for="ev-32"></label>
-                </div>
-              </div></td>
+                {% for ind in range(state_content['states']['neVRange']|length) %}
+                  <div class="col">
+                    <input type="checkbox" class="btn-check" id="ev-{{ ind }}" {{ "checked" if state_content['states']['neVRange'][ind]=="1" }} autocomplete="off">
+                    <label class="btn-color btn" for="ev-{{ ind }}"></label>
+                  </div>
+                {% endfor %}
+              </td>
             </tr>
             <!-- NTran -->
             <tr>
