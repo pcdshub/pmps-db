@@ -101,7 +101,7 @@
                 {% if new %}
                   {% for bc_value in config.form_defaults['nBeamClassRange'] %}
                     <input type="checkbox" class="btn-check" value="1" name="bc-{{ loop.index0 }}-val" id="bc-{{ loop.index0 }}" {{ "checked" if bc_value=="1" }} autocomplete="off" >
-                    <label class="btn-color btn" for="bc-{{ loop.index0 }}"></label>
+                    <label class="btn-color btn" for="bc-{{ loop.index0 }}">{{ loop.index0 }}</label>
                   {% endfor %}
                 {% else %}
                   {% for bc_value in state_content['states']['nBeamClassRange'] %}
@@ -111,6 +111,11 @@
                 {% endif %}
                 </div>
               </div></td>
+              <div class="col">
+                <td>
+                  <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#BC_info">Info</button>
+                </td>
+              </div>
             </tr>
             <!-- EV Range-->
             <tr>
@@ -219,6 +224,40 @@
       </div>
       <button name="update_state_button" type="submit">Submit</button>
     </form>
+  </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="BC_info" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+        <h4 class="modal-title">BC Data</h4>
+      </div>
+      <div class="modal-body">
+        <p>Index	Display Name	∆T (s)	dt (s)	Q (pC)	Rate max (Hz)	Current (nA)	Power @ 4 GeV (W)	Int. Energy @ 4 GeV (J)	Notes
+          0	Beam Off	0.5	-	0	0	0	0	0	Beam off, Kickers off
+          1	Kicker STBY	0.5	-	0	0	0	0	0	Beam off, Kickers standby
+          2	BC1Hz	1	1	350	1	0.35	1.4	1.4	350 pC x 1 Hz
+          3	BC10Hz	1	0.1	3500	10	3.5	14	14	350 pC X 10 Hz
+          4	Diagnostic	0.5	-	5000	-	10	40	20	50 pC x 200 Hz
+          5	BC120Hz	0.2	0.0083	6000	120	30	120	24	250 pC x 120 Hz
+          6	Tuning	0.2	-	7000	-	35	140	28	100 pC X 350 Hz
+          7	1% MAP	0.01	-	3000	-	300	1200	12	100 pC X 3 kHz
+          8	5% MAP	0.003	-	4500	-	1500	6000	18	100 pC x 15 kHz
+          9	10% MAP	0.001	-	3000	-	3000	12000	12	100 pC X 30 kHz
+          10	25% MAP	4e-4	-	3000	-	7500	30000	12	100 pC x 75 kHz
+          11	50% MAP	2e-1	-	3000	-	15000	60000	12	100 pC x 150 kHz
+          12	100% MAP	2e-4	-	6000	-	30000	120000	24	100 pC x 300 kHz
+          13	Unlimited	-	-	-	-	-	-	-	-
+          14	Unlimited	-	-	-	-	-	-	-	-
+          15	Unlimited	-	-	-	-	-	-	-	-</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}
