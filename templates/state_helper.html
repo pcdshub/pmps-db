@@ -228,7 +228,7 @@
 </div>
 <!-- Modal -->
 <div class="modal fade" id="BC_info" role="dialog">
-  <div class="modal-dialog">
+  <div class="modal-dialog w-50 mw-100">
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
@@ -236,27 +236,76 @@
         <h4 class="modal-title">BC Data</h4>
       </div>
       <div class="modal-body">
-        <p>Index	Display Name	∆T (s)	dt (s)	Q (pC)	Rate max (Hz)	Current (nA)	Power @ 4 GeV (W)	Int. Energy @ 4 GeV (J)	Notes
-          0	Beam Off	0.5	-	0	0	0	0	0	Beam off, Kickers off
-          1	Kicker STBY	0.5	-	0	0	0	0	0	Beam off, Kickers standby
-          2	BC1Hz	1	1	350	1	0.35	1.4	1.4	350 pC x 1 Hz
-          3	BC10Hz	1	0.1	3500	10	3.5	14	14	350 pC X 10 Hz
-          4	Diagnostic	0.5	-	5000	-	10	40	20	50 pC x 200 Hz
-          5	BC120Hz	0.2	0.0083	6000	120	30	120	24	250 pC x 120 Hz
-          6	Tuning	0.2	-	7000	-	35	140	28	100 pC X 350 Hz
-          7	1% MAP	0.01	-	3000	-	300	1200	12	100 pC X 3 kHz
-          8	5% MAP	0.003	-	4500	-	1500	6000	18	100 pC x 15 kHz
-          9	10% MAP	0.001	-	3000	-	3000	12000	12	100 pC X 30 kHz
-          10	25% MAP	4e-4	-	3000	-	7500	30000	12	100 pC x 75 kHz
-          11	50% MAP	2e-1	-	3000	-	15000	60000	12	100 pC x 150 kHz
-          12	100% MAP	2e-4	-	6000	-	30000	120000	24	100 pC x 300 kHz
-          13	Unlimited	-	-	-	-	-	-	-	-
-          14	Unlimited	-	-	-	-	-	-	-	-
-          15	Unlimited	-	-	-	-	-	-	-	-</p>
+        <table class="table table-responsive">
+          <thead>
+            <tr>
+              <th>Index</th>
+              <th>Display Name</th>
+              <th>∆T (s)</th>
+              <th>dt (s)</th>	
+              <th>Q (pC)</th>	
+              <th>Rate max (Hz)</th>
+            	<th>Current (nA)</th>
+              <th>Power @ 4 GeV (W)</th>
+            	<th>Int. Energy @ 4 GeV (J)	</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>0</td> <td>Beam Off</td>	<td>0.5</td> <td>-</td>	<td>0</td>	<td>0</td>	<td>0</td>	<td>0</td>	<td>0</td>	<td>Beam off, Kickers off</td>
+            </tr>
+            <tr>
+              <td>1</td> <td>Kicker STBY</td> <td>0.5</td> <td>-</td> <td>0</td> <td>0</td> <td>0</td> <td>0</td> <td>0</td>	<td>Beam off, Kickers standby</td>
+            </tr>
+            <tr>
+              <td>2</td> <td>BC1Hz</td> <td>1</td> <td>1</td> <td>350</td> <td>1</td> <td>0.35</td> <td>1.4</td> <td>1.4</td> <td>350 pC x 1 Hz</td>
+            </tr>
+            <tr>
+              <td>3</td> <td>BC10Hz</td> <td>1</td> <td>0.1</td> <td>3500</td> <td>10</td> <td>3.5</td> <td>14</td> <td>14</td> <td>350 pC X 10 Hz</td>
+            </tr>
+            <tr>
+              <td>4</td> <td>Diagnostic</td> <td>0.5</td> <td>-</td> <td>5000</td> <td>-</td> <td>10</td> <td>40</td> <td>20</td> <td>50 pC x 200 Hz</td>
+            </tr>
+            <tr>
+              <td>5</td> <td>BC120Hz</td> <td>0.2</td> <td>0.0083</td> <td>6000</td> <td>120</td> <td>30</td> <td>120</td> <td>24</td> <td>250 pC x 120 Hz</td>
+            </tr>
+            <tr>
+              <td>6</td> <td>Tuning</td> <td>0.2</td> <td>-</td> <td>7000</td> <td>-</td> <td>35</td> <td>140</td> <td>28</td> <td>100 pC X 350 Hz</td>
+            </tr>
+            <tr>
+              <td>7</td> <td>1% MAP</td> <td>0.01</td> <td>-</td> <td>3000</td> <td>-</td> <td>300</td> <td>1200</td> <td>12</td> <td>100 pC X 3 kHz</td>
+            </tr>
+            <tr>
+              <td>8</td> <td>5% MAP</td> <td>0.003</td> <td>-</td> <td>4500</td> <td>-</td> <td>1500</td> <td>6000</td> <td>18</td> <td>100 pC x 15 kHz</td>
+            </tr>
+            <tr>
+              <td>9</td> <td>10% MAP</td> <td>0.001</td> <td>-</td> <td>3000</td> <td>-</td> <td>3000</td> <td>12000</td> <td>12</td> <td>100 pC X 30 kHz</td>
+            </tr>
+            <tr>
+              <td>10</td> <td>25% MAP</td> <td>4e-4</td> <td>-</td> <td>3000</td> <td>-</td> <td>7500</td> <td>30000</td> <td>12</td> <td>100 pC x 75 kHz</td>
+            </tr>
+            <tr>
+              <td>11</td> <td>50% MAP</td>	<td>2e-1</td> <td>-</td> <td>3000</td> <td>-</td> <td>15000</td> <td>60000</td> <td>12</td> <td>100 pC x 150 kHz</td>
+            </tr>
+            <tr>
+              <td>12</td> <td>100% MAP</td> <td>2e-4</td> <td>-</td> <td>6000</td> <td>-</td> <td>30000</td> <td>120000</td> <td>24</td> <td>100 pC x 300 kHz</td>
+            </tr>
+            <tr>
+              <td>13</td> <td>Unlimited</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+            </tr>
+            <tr>
+              <td>14</td> <td>Unlimited</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+            </tr>
+            <tr>
+              <td>15</td> <td>Unlimited</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+            </tr>
+          </tbody>
+        </tab>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
-      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
     </div>
   </div>
 </div>
