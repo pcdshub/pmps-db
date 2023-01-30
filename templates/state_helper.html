@@ -131,7 +131,7 @@
                   {% if new %}
                     {% for ev_value in config.form_defaults['neVRange'] %}
                     <input type="checkbox" class="btn-check" value="1" name="ev-{{ loop.index0 }}-val" id="ev-{{ loop.index0 }}" {{ "checked" if ev_value=="1" }} autocomplete="off" />
-                    <label class="btn-color btn" style="font-size: 11px; padding: 0; width: {{80/config.form_defaults['neVRange'] | length}}%;" for="ev-{{ loop.index0 }}">
+                    <label class="btn-color btn" style="font-size: 11px; padding: 0; width: {{ 80/config.form_defaults['neVRange'] | length }}%;" for="ev-{{ loop.index0 }}">
                       {{config.ev_ranges['HXR'][config.form_defaults['neVRange'] | length - loop.index0 - 1 ]}}<br>
                       {{config.ev_ranges['SXR'][config.form_defaults['neVRange'] | length - loop.index0 - 1 ]}}
                     </label>
@@ -139,7 +139,7 @@
                   {% else %}
                     {% for ev_value in state_content['states']['neVRange'] %}
                         <input type="checkbox" class="btn-check" value="1" name="ev-{{ loop.index0 }}-val" id="ev-{{ loop.index0 }}" {{ "checked" if ev_value=="1" }} autocomplete="off" />
-                        <label class="btn-color btn" style="font-size: 11px; padding: 0; width: {{80/state_content['states']['neVRange'] | length}}%;" for="ev-{{ loop.index0 }}">
+                        <label class="btn-color btn" style="font-size: 11px; padding: 0; width: {{ 80/state_content['states']['neVRange'] | length }}%;" for="ev-{{ loop.index0 }}">
                           {{config.ev_ranges['HXR'][state_content['states']['neVRange'] | length - loop.index0 - 1 ]}}<br>
                           {{config.ev_ranges['SXR'][state_content['states']['neVRange'] | length - loop.index0 - 1 ]}}
                         </label>
