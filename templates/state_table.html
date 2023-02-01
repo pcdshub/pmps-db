@@ -3,7 +3,7 @@
 
 
 {% block content %}
-  <div class="container border">
+  <div class="container-fluid border">
     <div class="row">
       <div class="col">
         <form action="/add_state/">
@@ -23,10 +23,10 @@
   </div>
 
   <!-- Show Title/Included Information -->
-  <div class="container table-responsive border">
+  <div class="container-fluid border">
     <div class="row">
       <div class="col">
-        <h4>State Info</h4>
+        <h3>State Info</h3>
       </div>
       {% if message %}
         <div class="col"></div>   
@@ -37,46 +37,48 @@
         </div>   
       {% endif %} 
     </div>
-    <!-- Table Containing States Information -->
-    <table class="table table-striped border table-hover " id="states" >
-      <thead>
-        <tr>
-          {% for name in state_content["titles"] %}
-            <th>{{ name }}</th>
-          {% endfor %}
-        </tr>
-      </thead>
-      <tbody>
-        <!--id,name,nBeamClassRange,neVRange,nTran,ap_name,ap_ygap,ap_ycenter,ap_xgap,ap_xcenter,damage_limit,pulse_energy,notes,special,reactive_temp,reactive_pressure-->
-        {% for row in state_content["states"] %}
+    <div class="table-responsive">
+      <!-- Table Containing States Information -->
+      <table class="table table-striped border table-hover " id="states" >
+        <thead>
           <tr>
-            <!-- Clickable ID to navigate to one singular state edit form -->
-            <td><input type="hidden" name="s_id" value= "{{ row.id }}"></input>
-              <a href="{{ url_for('db_handler.state_helper', state_id=row.id) }}">{{ row.id }}</a></td>
-            <td><text name="s_name">{{ row.name }}</td>
-            <td><text name="s_beam">{{ row.beamline }}</td>
-            <td><text name="s_bcr">{{ row.nBeamClassRange }}</td>
-            <td><text name="s_nev">{{ row.neVRange }}</td>
-            <td><text name="s_nt">{{ row.nTran }}</td>
-            <td><text name="s_nr">{{ row.nRate }}</td>
-            <td><text name="s_as">{{ row.ap_name }}</td>
-            <td><text name="s_ayg">{{ row.ap_ygap }}</td>
-            <td><text name="s_ayc">{{ row.ap_ycenter }}</td>
-            <td><text name="s_axg">{{ row.ap_xgap }}</td>
-            <td><text name="s_axc">{{ row.ap_xcenter }}</td>
-            <td><text name="s_apn">{{ row.damage_limit }}</td>
-            <td><text name="s_pen">{{ row.pulse_energy}}</td>
-            <td><text name="s_on">{{ row.notes }}</td>
-            {% if row.special %}
-              <td><input type="checkbox" checked disabled name="s_sp"></input></td>
-            {% else %}
-              <td><input type="checkbox" disabled name="s_sp"></input></td>
-            {% endif %}
-            <td><text name="s_rt">{{ row.reactive_temp }}</td>
-            <td><text name="s_rp">{{ row.reactive_pressure }}</td>
+            {% for name in state_content["titles"] %}
+              <th>{{ name }}</th>
+            {% endfor %}
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <!--id,name,nBeamClassRange,neVRange,nTran,ap_name,ap_ygap,ap_ycenter,ap_xgap,ap_xcenter,damage_limit,pulse_energy,notes,special,reactive_temp,reactive_pressure-->
+          {% for row in state_content["states"] %}
+            <tr>
+              <!-- Clickable ID to navigate to one singular state edit form -->
+              <td><input type="hidden" name="s_id" value= "{{ row.id }}"></input>
+                <a href="{{ url_for('db_handler.state_helper', state_id=row.id) }}">{{ row.id }}</a></td>
+              <td><text name="s_name">{{ row.name }}</td>
+              <td><text name="s_beam">{{ row.beamline }}</td>
+              <td><text name="s_bcr">{{ row.nBeamClassRange }}</td>
+              <td><text name="s_nev">{{ row.neVRange }}</td>
+              <td><text name="s_nt">{{ row.nTran }}</td>
+              <td><text name="s_nr">{{ row.nRate }}</td>
+              <td><text name="s_as">{{ row.ap_name }}</td>
+              <td><text name="s_ayg">{{ row.ap_ygap }}</td>
+              <td><text name="s_ayc">{{ row.ap_ycenter }}</td>
+              <td><text name="s_axg">{{ row.ap_xgap }}</td>
+              <td><text name="s_axc">{{ row.ap_xcenter }}</td>
+              <td><text name="s_apn">{{ row.damage_limit }}</td>
+              <td><text name="s_pen">{{ row.pulse_energy}}</td>
+              <td><text name="s_on">{{ row.notes }}</td>
+              {% if row.special %}
+                <td><input type="checkbox" checked disabled name="s_sp"></input></td>
+              {% else %}
+                <td><input type="checkbox" disabled name="s_sp"></input></td>
+              {% endif %}
+              <td><text name="s_rt">{{ row.reactive_temp }}</td>
+              <td><text name="s_rp">{{ row.reactive_pressure }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 {% endblock %}

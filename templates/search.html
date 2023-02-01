@@ -3,35 +3,34 @@
 
 {% block content %}
 <!-- Device to State Dropdown Selector-->
-  <div class="container border">
-    <div class="container">
+<div class="container-fluid border">
+    <div class="row">
       {% if message %}
         <h4 class="text-success">{{ message }}</h4>
       {% endif %}
-
     </div>
-    <div class="container">
+    <div class="row">
       <h3>Devices and States</h3> 
-      <div class="row ">
-        <div class="col-sm-3 border border-light rounded">
-          <form action="/state_info/" name="device_states_form" method="post">
-            <h5>Select a Device</h5>
-            <div class="input-group">
-              <SELECT class="form-select" name="device_id">
-              {% for d in devices %}
-                <OPTION value={{d[0]}} class="dropdown"> {{d[1]}}</OPTION>
-              {% endfor %}
-              </SELECT>
-              <button class="btn btn-light btn-outline-dark" name="device_state_button" type="submit">Get States</button>
-            </div>
-          </form>
-        </div>
-        <div class="col border border-light rounded">
-          <form action="/new_device/" name="new_dev" method="post">
-            <h5>Create a New Device</h5>
-            <button class="btn btn-primary btn-outline-light" name="new_dev_button" type="submit">New</button>
-          </form>
-        </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-3 border border-light rounded">
+        <form action="/state_info/" name="device_states_form" method="post">
+          <h5>Select a Device</h5>
+          <div class="input-group">
+            <SELECT class="form-select" name="device_id">
+            {% for d in devices %}
+              <OPTION value={{d[0]}} class="dropdown"> {{d[1]}}</OPTION>
+            {% endfor %}
+            </SELECT>
+            <button class="btn btn-light btn-outline-dark" name="device_state_button" type="submit">Get States</button>
+          </div>
+        </form>
+      </div>
+      <div class="col border border-light rounded">
+        <form action="/new_device/" name="new_dev" method="post">
+          <h5>Create a New Device</h5>
+          <button class="btn btn-primary btn-outline-light" name="new_dev_button" type="submit">New</button>
+        </form>
       </div>
     </div>
   <!-- If a specific device is given, allow a specific state to be selected/displayed -->
@@ -58,7 +57,7 @@
   </div>
 
   <!-- Search Bars -->
-  <div class="container border">
+  <div class="container-fluid border">
     <h3>Search by Name</h3> 
       <!-- Search bar for states -->
     <div class="row">
@@ -100,7 +99,7 @@
     </div>
   </div>
   <!-- Search by type -->
-  <div class="container border">
+  <div class="container-fluid border">
     <div class="row">
       <div class="col-5">
         <h3>Search by Device Type</h5>
@@ -121,6 +120,7 @@
       </div>
     </div>
   </div>
+</div>
 
 
 {% endblock %}

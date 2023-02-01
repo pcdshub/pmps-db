@@ -10,27 +10,19 @@
   </head>
   <body>
     <!-- Homerow including navigation buttons at top of all pages -->
-    <div class="container">
+    <div class="container-fluid">
       {% block homerow %}
-      <div class="row border bg-info mb-1 text-white">
-        <div class="col-sm-1">
-          <form action="/export_page/">
-            <button class="btn btn-light btn-outline-dark" name="home" type="submit">Config</button>
-          </form>
-        </div>
-        <!-- Device&State Search Page -->
-        <div class="col-sm-1">
-          <form action="/device_info/" method="get">
-            <button class="btn btn-light btn-outline-dark" name="devices" type="submit">Browse</button>
-          </form>
-        </div>
-        <div class="col-sm-1">
+      <div class="row gx-5 border bg-info py-1">
+        <div class="btn-group col-4">
+          <a href="/export_page/" class="btn btn-light btn-outline-dark" name="home" role="button">Config</a>
+          <!-- Device&State Search Page -->
+          <a href="/device_info/" class="btn btn-light btn-outline-dark" name="devices" role="button">Browse</a>
           <button class="btn btn-light btn-outline-dark" onclick="goBack()">Back</button>
         </div>
       </div>
       {% endblock %}
     </div>
-    <div class="container">
+    <div class="container-fluid">
       <title>PMPS</title>
       {% if content %}
         <h1>{{ content }}!</h1>
@@ -38,7 +30,7 @@
         <div class="display-6" color="gray">PMPS Configuration Database</class>
       {% endif %}
     </div>
-    <div class="container">
+    <div class="container-fluid">
       <span></span>
     </div>
       {% block content %}{% endblock %}
