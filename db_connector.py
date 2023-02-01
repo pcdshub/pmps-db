@@ -588,8 +588,16 @@ def handle_state(session, state_name, state):
     state = ['' if sub == '-' else sub for sub in state]
     #TODO: check if state name exists
     state_obj = create_state_object(state_name, state)
+    nBC = state[3]
+    neV = state[4]
     if not state_obj:
         print("ERROR: State with Unique Name ", state_name, "already exists.")
+        return
+    if len(nBC) != 16:
+        print("ERROR: State ", state_name, " with beam class bitmask ", nBC, " is invalid!")
+        return
+    if len(neV) != 32:
+        print("ERROR: State ", state_name, " with ev range bitmask ", neV, " is invalid!")
         return
     try:
         session.add(state_obj)
@@ -605,7 +613,7 @@ def handle_state(session, state_name, state):
         return
     insert_hist = (
         insert(History).
-            values(state_id=state_obj.id,name=state_name,beamline=state[0],nBeamClassRange=state[3],neVRange=state[4],nTran=state[5],nRate=state[6],ap_name=state[7],ap_ygap=state[8],ap_ycenter=state[9],ap_xgap=state[10],ap_xcenter=state[11],damage_limit=state[12],pulse_energy=state[13],notes=state[14],special=False,reactive_temp=state[15],reactive_pressure=state[16])
+            values(state_id=state_obj.id,name=state_name,beamline=state[0],nBeamClassRange=nBC,neVRange=neV,nTran=state[5],nRate=state[6],ap_name=state[7],ap_ygap=state[8],ap_ycenter=state[9],ap_xgap=state[10],ap_xcenter=state[11],damage_limit=state[12],pulse_energy=state[13],notes=state[14],special=False,reactive_temp=state[15],reactive_pressure=state[16])
         )
     session.execute(insert_hist)
     session.commit()

@@ -12,16 +12,26 @@
     </div>
     <div class="container">
       <h3>Devices and States</h3> 
-      <div class="border border-light rounded">
-        <form action="/state_info/" name="device_states_form" method="post">
-          <h5>Select a Device</h5>
-          <SELECT name="device_id">
-            {% for d in devices %}
-              <OPTION value={{d[0]}} class="dropdown"> {{d[1]}}</OPTION>
-            {% endfor %}
-          </SELECT>
-          <button class="button" name="device_state_button" type="submit">Get States</button>
-        </form>
+      <div class="row ">
+        <div class="col-sm-3 border border-light rounded">
+          <form action="/state_info/" name="device_states_form" method="post">
+            <h5>Select a Device</h5>
+            <div class="input-group">
+              <SELECT class="form-select" name="device_id">
+              {% for d in devices %}
+                <OPTION value={{d[0]}} class="dropdown"> {{d[1]}}</OPTION>
+              {% endfor %}
+              </SELECT>
+              <button class="btn btn-light btn-outline-dark" name="device_state_button" type="submit">Get States</button>
+            </div>
+          </form>
+        </div>
+        <div class="col border border-light rounded">
+          <form action="/new_device/" name="new_dev" method="post">
+            <h5>Create a New Device</h5>
+            <button class="btn btn-primary btn-outline-light" name="new_dev_button" type="submit">New</button>
+          </form>
+        </div>
       </div>
     </div>
   <!-- If a specific device is given, allow a specific state to be selected/displayed -->
@@ -41,7 +51,7 @@
             <OPTION value={{device_states[0][0]}} class="dropdown">{{device_states[0][0]}}</OPTION>
           {% endif %}
         </SELECT>
-        <button class="button" name="state_info_button" type="submit">State Info</button>
+        <button class="btn btn-light btn-outline-dark" name="state_info_button" type="submit">State Info</button>
       </form>
       {% endif %}
     </div>
@@ -63,7 +73,7 @@
               <input name="state_name" value=""></input>
             </div>
             <div class="col">
-              <button class="button" name="state_submit_button" type="submit">Search</button>
+              <button class="btn btn-light btn-outline-dark" name="state_submit_button" type="submit">Search</button>
             </div>
           </div>
         </p></form>
@@ -82,7 +92,7 @@
               <input name="device_name" value=""></input>
             </div>
             <div class="col">
-              <button class="button" name="dev_submit_button" type="submit">Search</button>
+              <button class="btn btn-light btn-outline-dark" name="dev_submit_button" type="submit">Search</button>
             </div>
           </div>
         </p></form>
@@ -91,24 +101,25 @@
   </div>
   <!-- Search by type -->
   <div class="container border">
-    <h3>Search by Device Type</h5>
-    <form action="/devices_by_type/" method="post">
-      <div class="row">
-        <div class="col-sm-2">
-          Type:
-        </div>
-        <div class="col-sm-2">
-          <select name="device_type" method="post" action="/">
-            {% for dt in config["device_types"] %}
-              <option value= "{{ dt }}">{{ dt }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="col">
-          <button class="button" name="type_submit_button" type="submit">Search</button>
-        </div>
+    <div class="row">
+      <div class="col-5">
+        <h3>Search by Device Type</h5>
+        <form action="/devices_by_type/" method="post">
+          <div class="form-group">
+            <div class="input-group">
+              <label for="device_type" class="col-sm-2 col-form-label">Type:</label>
+                  <select class="form-select" name="device_type" id="device_type" method="post" action="/">
+                    {% for dt in config["device_types"] %}
+                      <option value= "{{ dt }}">{{ dt }}</option>
+                    {% endfor %}
+                  </select>
+                  <button class="btn btn-light btn-outline-dark" name="type_submit_button" type="submit">Search</button>
+              </div>
+            </div>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
   </div>
 
 

@@ -21,4 +21,4 @@ state_titles = ["ID","Name","Beamline", "nBC Range","nEV Range","NTran","NRate",
 state_fields = ['name','beamline', 'nBeamClassRange','neVRange','nTran','nRate','ap_name','ap_ygap', 'ap_ycenter', 'ap_xgap', 'ap_xcenter', 'damage_limit','pulse_energy','notes', 'special', 'reactive_temp', 'reactive_pressure']
 
 history_titles = ["","ID","Timestamp","Name","Beamline", "nBC Range","nEV Range","NTran","NRate","Aperture Name","Y Gap", "Y Center", "X Gap", "X Center", "Damage Limit", "Pulse Energy", "Notes", "Special", "Reactive Temp", "Reactive Pressure"]
-device_titles = ["Device ID/States", "Name", "PLC", "Device Type", "Access Group"]
+device_titles = ["Device ID/States", "Name", "PLC", "Device Type", "Beamline"]

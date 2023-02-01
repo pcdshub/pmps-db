@@ -5,6 +5,13 @@
 {% block content %}
   <div class="container border">
     <div class="row">
+      <div class="col">
+        <form action="/add_state/">
+          <input type="hidden" name="device_name" value="{{ state_content['device_name'] }}"></input>
+          <button class="btn btn-outline-light btn-primary" name="State" type="submit">New State</button>
+
+        </form>
+      </div>
       {% if state_content["device_name"] %}
         <div class="col">
           <h5>Device ID: 
@@ -12,12 +19,6 @@
           </h5> 
         </div>
       {% endif %}
-      <div class="col">
-        <form action="/add_state/">
-          <input type="hidden" name="device_name" value="{{ state_content['device_name'] }}"></input>
-          <button class="rounded" name="State" type="submit">New State</button>
-        </form>
-      </div>
     </div>
   </div>
 
