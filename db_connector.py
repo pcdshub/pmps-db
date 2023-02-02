@@ -378,7 +378,7 @@ def add_state():
     #default state information
     state_content=format_state(state_info)
     state_content["device_name"] = request.args.get("device_name")
-    beamline = get_beamline(request.args.get("device_name"))
+    state_content["beamline"] = get_beamline(request.args.get("device_name"))
     return render_template('state_helper.html', config=CONSTANTS, state_content=state_content, new=True)  
 
 @db_handler.route("/new_device/", methods=["POST", "GET"])
@@ -439,7 +439,6 @@ def format_state(states):
                 ).filter(
                     DeviceStates.state_id==states['id']
                 ).one()
-        print(device_name)
         state_content = {"device_name":device_name[0], "beamline":device_name[1], "titles":CONSTANTS.state_titles, "states":states}
     except:
         state_content = {"titles":CONSTANTS.state_titles, "states":states}
@@ -450,7 +449,7 @@ def get_beamline(device_name):
     session = Session()
     access_group = session.query(Devices.access_group).filter(Devices.name==device_name).all()
     session.close()
-    return access_group if access_group else None
+    return access_group[0][0] if access_group else None
 
 def format_device(devices):
     """

@@ -29,15 +29,15 @@
       <div class="col"></div>
     <form action="/update_state/" name="update_state_form" method="post">
   {% elif new %}
-  <form action="/update_state/" name="update_state_form" method="post">
-    <div class="row">
-      <div class="col-sm-3">
-        Adding New State for Device:
+    <form action="/update_state/" name="update_state_form" method="post">
+      <div class="row">
+        <div class="col-sm-3">
+          Adding New State for Device:
+        </div>
+        <div class="col-sm-2">
+          <input type="text" name="s_beam" value="{{ state_content['device_name'] }}" readonly>
+        </div>
       </div>
-      <div class="col-sm-2">
-        <input type="text" name="s_beam" value="{{ state_content['device_name'] }}" readonly>
-      </div>
-    </div>
   {% endif %}
   {% if message %}
     <div class="col-xl text-end">
@@ -76,7 +76,7 @@
               <td><th>{{state_content["titles"][2]}}</th></td>
               <td>
                 {% if new %}
-                  <input type="text" name="s_beam" value="{{ beamline }}" readonly>
+                  <input type="text" name="s_beam" value="{{ state_content['beamline'] }}" readonly>
                 {% else %}
                   <input type="text" name="s_beam" value="{{ state_content['states']['beamline'] }}" readonly>
                 {% endif %}
