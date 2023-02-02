@@ -149,15 +149,15 @@ def state_search_results():
     session = Session()
     results = []
     if state_string == '':
-        results = session.query(States)
+        results = session.query(States).all()
         session.close()    
-        return render_template('state_table.html', state_content=format_state(results))
-    results = session.query(States).filter(States.name.contains(state_string))
+        return render_template('state_table.html', state_content=format_state(results), all_states=True)
+    results = session.query(States).filter(States.name.contains(state_string)).all()
     if not results:
         session.close()    
         return render_template('landing.html')
     session.close()
-    return render_template('state_table.html', state_content=format_state(results))
+    return render_template('state_table.html', state_content=format_state(results), all_states=True)
 
 @db_handler.route('/device_search_results/', methods=["POST"])
 def device_search_results():
@@ -207,7 +207,7 @@ def states_by_group():
         while count < len(new_states):
             devices.append(device_data)
             count +=1
-    return render_template('state_table.html', state_content=format_state(states),devices=devices)
+    return render_template('state_table.html', state_content=format_state(states),devices=devices, all_states=True)
 
 
 @db_handler.route("/update_state/", methods=["POST"])
@@ -242,7 +242,7 @@ def update_state():
         else:
             beam_classes += "1"
     #Get Everything Else, and put it together
-    orig_state = [request.form.get('s_name'), request.form.get('s_beam'), beam_classes, ev_ranges, request.form['s_nt'], request.form.get('s_nr'), request.form.get('s_as'), request.form['s_ayg'],request.form['s_ayc'],request.form['s_axg'],request.form['s_axc'],request.form['s_apn'], request.form['s_pen'], request.form['s_on'], request.form.get('s_sp'), request.form['s_rt'], request.form['s_rp']]
+    orig_state = [request.form.get('s_name'), request.form['s_beam'], beam_classes, ev_ranges, request.form['s_nt'], request.form.get('s_nr'), request.form.get('s_as'), request.form['s_ayg'],request.form['s_ayc'],request.form['s_axg'],request.form['s_axc'],request.form['s_apn'], request.form['s_pen'], request.form['s_on'], request.form.get('s_sp'), request.form['s_rt'], request.form['s_rp']]
     #Set Special Tag
     if orig_state[14] == "special":
         orig_state[14] = True
@@ -257,11 +257,11 @@ def update_state():
         state_info = check_state(state.id)
         if not state_info:
             session.close()
-            return render_template('state_table.html', state_content=format_state(['','','']), message="Failed!")
+            return render_template('state_table.html', state_content=format_state(['','','']), message="Failed!", all_states=True)
         insert_device_states({device_id[0]: [state.id]}, session)
     session.close()
     all_device_states = get_states_by_device_id(device_id=device_id[0])
-    return render_template('state_table.html', state_content=format_state(all_device_states), message="Saved!")
+    return render_template('state_table.html', state_content=format_state(all_device_states), message="Saved!", all_states=False)
 
 @db_handler.route("/add_device/", methods=["POST"])
 def add_device():
@@ -350,7 +350,7 @@ def device_states_display(device_id=None):
     state_content = format_state(states)
     if not states:
         state_content["device_name"] = get_device_name_from_id(device_id)
-    return render_template('state_table.html', device_id=device_id, state_content=state_content)
+    return render_template('state_table.html', device_id=device_id, state_content=state_content, all_states=False)
 
 @db_handler.route("/state_helper/", methods=["GET", "POST"])
 def state_helper():
@@ -368,7 +368,7 @@ def single_state():
     """
     state_id = request.form['state_info']
     state_info = get_state_by_id(state_id)
-    return render_template('state_table.html', state_content=format_state(state_info))  
+    return render_template('state_table.html', state_content=format_state(state_info), all_states=False)  
 
 @db_handler.route("/add_state/", methods=["POST", "GET"])
 def add_state():
@@ -400,7 +400,7 @@ def state_info():
         state_content=format_state(states) 
     else:
         state_content=format_state(['','',''])
-    return render_template('state_table.html', state_content=state_content)
+    return render_template('state_table.html', state_content=state_content, all_states=False)
 
 @db_handler.route("/state_history/", methods=["GET", "POST"])
 def state_history():

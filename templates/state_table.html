@@ -5,14 +5,13 @@
 {% block content %}
   <div class="container-fluid border">
     <div class="row">
-      <div class="col">
-        <form action="/add_state/">
-          <input type="hidden" name="device_name" value="{{ state_content['device_name'] }}"></input>
-          <button class="btn btn-outline-light btn-primary" name="State" type="submit">New State</button>
-
-        </form>
-      </div>
-      {% if state_content["device_name"] %}
+      {% if not all_states %}
+        <div class="col">
+          <form action="/add_state/">
+            <input type="hidden" name="device_name" value="{{ state_content['device_name'] }}"></input>
+            <button class="btn btn-outline-light btn-primary" name="State" type="submit">New State</button>
+          </form>
+        </div>
         <div class="col">
           <h5>Device ID: 
             <input disabled name="device_name" value="{{ state_content['device_name'] }}"></input>

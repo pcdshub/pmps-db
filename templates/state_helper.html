@@ -82,15 +82,9 @@
               {% endif %}
             <tr>
               <td><th>{{state_content["titles"][2]}}</th></td>
-              <td><select name="s_beam" method="post" action="/">
-                {% for bl in config["beamlines"] %}
-                  {% if bl == state_content['states']['beamline'] %}
-                    <option value= "{{ bl }}" SELECTED>{{ bl }}</option>"
-                  {% else %}
-                    <option value= "{{ bl }}">{{ bl }}</option>"
-                  {% endif %}
-                {% endfor %}
-              </select></td>
+              <td>
+                <input type="text" name="s_beam" value="{{ state_content['states']['beamline'] }}" readonly>
+              </td>
             </tr>
             <!-- Beam Class -->           
             <tr>
@@ -127,21 +121,27 @@
               <!-- EV Range Checkboxes -->
               <td><div class="row g-0">
                 <div class="col">
-                  <label class="btn" style="font-size: 11px; padding: 0;" disabled>HXR<br>SXR</label>
+                  {% if state_content['states']['beamline'] in config.beamlines['SXR'] %}
+                    <label class="btn" style="font-size: 11px; padding: 0;" disabled>SXR</label>
+                  {% else %}
+                    <label class="btn" style="font-size: 11px; padding: 0;" disabled>HXR</label>
+                  {% endif %}
                   {% if new %}
                     {% for ev_value in config.form_defaults['neVRange'] %}
                     <input type="checkbox" class="btn-check" value="1" name="ev-{{ loop.index0 }}-val" id="ev-{{ loop.index0 }}" {{ "checked" if ev_value=="1" }} autocomplete="off" />
                     <label class="btn-color btn" style="font-size: 11px; padding: 0; width: {{ 80/config.form_defaults['neVRange'] | length }}%;" for="ev-{{ loop.index0 }}">
-                      {{config.ev_ranges['HXR'][config.form_defaults['neVRange'] | length - loop.index0 - 1 ]}}<br>
-                      {{config.ev_ranges['SXR'][config.form_defaults['neVRange'] | length - loop.index0 - 1 ]}}
+                      {{config.ev_ranges['SXR'][config.form_defaults['neVRange'] | length - loop.index0 - 1 ]}}<br>
                     </label>
                     {% endfor %}
                   {% else %}
                     {% for ev_value in state_content['states']['neVRange'] %}
                         <input type="checkbox" class="btn-check" value="1" name="ev-{{ loop.index0 }}-val" id="ev-{{ loop.index0 }}" {{ "checked" if ev_value=="1" }} autocomplete="off" />
                         <label class="btn-color btn" style="font-size: 11px; padding: 0; width: {{ 80/state_content['states']['neVRange'] | length }}%;" for="ev-{{ loop.index0 }}">
-                          {{config.ev_ranges['HXR'][state_content['states']['neVRange'] | length - loop.index0 - 1 ]}}<br>
-                          {{config.ev_ranges['SXR'][state_content['states']['neVRange'] | length - loop.index0 - 1 ]}}
+                        {% if state_content['states']['beamline'] in config.beamlines['SXR'] %}
+                          {{ config.ev_ranges['SXR'][state_content['states']['neVRange'] | length - loop.index0 - 1 ]}}<br>
+                        {% else %}
+                          {{ config.ev_ranges['HXR'][state_content['states']['neVRange'] | length - loop.index0 - 1 ]}}<br>
+                        {% endif %}
                         </label>
                     {% endfor %}
                   {% endif %}
