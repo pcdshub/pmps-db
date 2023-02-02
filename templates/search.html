@@ -67,7 +67,9 @@
         <div class="form-group">
           <div class="input-group">
             <label for="state_name" class="col-2 col-form-label">Name (full or partial):</label>
-            <input class="col-3" name="state_name" id="state_name" value=""></input>
+            <span class="col-4">
+              <input type="text" class="form-control" name="state_name" id="state_name" value=""></input>
+            </span>
             <button class="btn btn-light btn-outline-dark" name="state_submit_button" type="submit">Search</button>
             <button class="btn btn-light btn-outline-primary" name="all_submit_button" type="submit">All</button>
           </div>
@@ -81,7 +83,9 @@
         <div class="form-group">
           <div class="input-group">
             <label for="device_name" class="col-2 col-form-label">Name (full or partial):</label>
-            <input class="col-3" name="device_name" id="device_name" value=""></input>
+            <span class="col-4">
+              <input type="text" class="form-control" name="device_name" id="device_name" value=""></input>
+            </span>
             <button class="btn btn-light btn-outline-dark" name="dev_submit_button" type="submit">Search</button>
             <button class="btn btn-light btn-outline-primary" name="all_dev_submit_button" type="submit">All</button>
           </div>
@@ -95,16 +99,15 @@
       <h3>Search by Device Type</h5>
       <form action="/devices_by_type/" method="post">
         <div class="form-group">
-          <div class="col-6">
             <div class="input-group">
-              <div class="col-2">
-                <label for="device_type" class="col-form-label">Type:</label>
+              <label for="device_type" class="col-2 col-form-label">Type:</label>
+              <div class="col-4">
+                <select class="form-select" name="device_type" id="device_type" method="post" action="/">
+                  {% for dt in config["device_types"] %}
+                    <option value= "{{ dt }}">{{ dt }}</option>
+                  {% endfor %}
+                </select>
               </div>
-              <select class="form-select" name="device_type" id="device_type" method="post" action="/">
-                {% for dt in config["device_types"] %}
-                  <option value= "{{ dt }}">{{ dt }}</option>
-                {% endfor %}
-              </select>
               <button class="btn btn-light btn-outline-dark" name="type_submit_button" type="submit">Search</button>
             </div>
           </div>

@@ -30,13 +30,12 @@
       {% if content %}
         <h1>{{ content }}!</h1>
       {% else %}
-        <div class="display-6" color="gray">PMPS Configuration Database</class>
+        <div class="display-6" color="gray">PMPS Configuration Database</div>
       {% endif %}
-    </div>
-    <div class="container-fluid">
-      <span></span>
-    </div>
-      {% block content %}{% endblock %}
+      <div class="container-fluid">
+        <span></span>
+      </div>
+    {% block content %}{% endblock %}
     </div>
     {% block scripts %}
       <script>
