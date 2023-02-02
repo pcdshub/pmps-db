@@ -14,12 +14,13 @@
       {% block homerow %}
       <div class="row gx-5 border bg-info py-1">
         <div class="btn-group col-1">
-          <a href="/export_page/" class="btn btn-light btn-outline-dark" name="home" role="button">Config</a>
+          <button class="btn btn-light btn-outline-danger" onclick="goBack()">Back</button>
         </div>
         <div class="btn-group col-3">
           <!-- Device&State Search Page -->
-          <a href="/device_info/" class="btn btn-light btn-outline-dark" name="devices" role="button">Browse</a>
-          <button class="btn btn-light btn-outline-dark" onclick="goBack()">Back</button>
+          <a href="/export_page/" class="btn btn-light btn-outline-secondary" name="home" role="button">Config</a>
+          <a href="/search/" class="btn btn-light btn-outline-dark" name="search" role="button">Search</a>
+          <a href="/device_search_results/" class="btn btn-light btn-outline-dark" name="devices" role="button">Devices</a>
         </div>
       </div>
       {% endblock %}

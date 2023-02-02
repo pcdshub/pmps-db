@@ -27,7 +27,7 @@ def populate_base():
     else:
         filename = request.files['formFile']
     insert_autosheet(filename)
-    return redirect(url_for('db_handler.device_info'))
+    return redirect(url_for('db_handler.search'))
 
 @db_handler.route("/revert/", methods=["POST"])
 def revert():
@@ -55,7 +55,7 @@ def revert():
 
 @db_handler.route("/export_page/", methods=["GET", "POST"])
 def export_page(message=None):
-    return render_template("landing.html", plcs=CONSTANTS.plcs, message=message)
+    return render_template("config.html", plcs=CONSTANTS.plcs, message=message)
 
 def get_plcs():
     """
@@ -88,7 +88,7 @@ def export_by_plc():
     export_file = "export/exported_" + plc + "-" + str(datetime.datetime.now().isoformat()) + ".json"
     devices = get_devices_by_plc(plc)
     if not devices:
-        return render_template("landing.html", message="Export Failed - No Device Information")
+        return render_template("config.html", message="Export Failed - No Device Information")
     export = get_export_data_by_device_ids(devices)
     plc_export = {plc:export}
     with open(export_file, 'w') as f:
@@ -111,7 +111,7 @@ def export_states_all():
     export_file = "export/exported_" + str(datetime.datetime.now().isoformat()) + ".json"
     device_ids = get_all_device_ids()
     if not device_ids:
-        return render_template("landing.html", message="Export Failed - No Device Information")
+        return render_template("config.html", message="Export Failed - No Device Information")
     export = get_export_data_by_device_ids(device_ids)
     with open(export_file, 'w') as f:
         f.write(json.dumps(export))
@@ -135,8 +135,8 @@ def get_export_data_by_device_ids(devices):
     return export_dict
 
 
-@db_handler.route("/device_info/", methods=["GET", "POST"])
-def device_info(message=None):
+@db_handler.route("/search/", methods=["GET", "POST"])
+def search(message=None):
     """
     Endpoint for the device and state search/list page
     """
@@ -155,13 +155,16 @@ def state_search_results():
     results = session.query(States).filter(States.name.contains(state_string)).all()
     if not results:
         session.close()    
-        return render_template('landing.html')
+        return redirect(url_for('db_handler.search'))
     session.close()
     return render_template('state_table.html', state_content=format_state(results), all_states=True)
 
-@db_handler.route('/device_search_results/', methods=["POST"])
+@db_handler.route('/device_search_results/', methods=["GET", "POST"])
 def device_search_results():
-    dev_string = request.form['device_name']
+    if request.method == 'GET':
+        dev_string = ''
+    elif request.method == 'POST':
+        dev_string = request.form['device_name']
     session = Session()
     if dev_string == '':
         results = session.query(Devices).order_by(Devices.name).all()
@@ -181,7 +184,7 @@ def devices_by_type():
     results = session.query(Devices).filter(Devices.device_type.like(device_type)).all()
     session.close()
     if not results:
-        return device_info("No Results Found")
+        return search("No Results Found")
     return render_template('all_devices.html', device_content=format_device(results))
 
 
@@ -599,20 +602,20 @@ def handle_state(session, state_name, state):
     nBC = state[3]
     neV = state[4]
     if not state_obj:
-        print("ERROR: State with Unique Name ", state_name, "already exists.")
+        print("ERROR: State with Unique Name '", state_name, "' already exists.")
         return
     if len(nBC) != 16:
-        print("ERROR: State ", state_name, " with beam class bitmask ", nBC, " is invalid!")
+        print("ERROR: State", state_name, "with beam class bitmask'", nBC, "'is invalid!")
         return
     if len(neV) != 32:
-        print("ERROR: State ", state_name, " with ev range bitmask ", neV, " is invalid!")
+        print("ERROR: State", state_name, "with ev range bitmask '", neV, "'is invalid!")
         return
     try:
         session.add(state_obj)
         session.commit()
     except IntegrityError:
         session.rollback()
-        print("ERROR: State with Unique Name ", state_name, "already exists.")
+        print("ERROR: State with Unique Name '", state_name, "' already exists.")
         return
     except:
         session.rollback()
