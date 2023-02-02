@@ -260,7 +260,8 @@ def update_state():
             return render_template('state_table.html', state_content=format_state(['','','']), message="Failed!")
         insert_device_states({device_id[0]: [state.id]}, session)
     session.close()
-    return render_template('state_table.html', state_content=format_state(state_info), message="Saved!")
+    all_device_states = get_states_by_device_id(device_id=device_id[0])
+    return render_template('state_table.html', state_content=format_state(all_device_states), message="Saved!")
 
 @db_handler.route("/add_device/", methods=["POST"])
 def add_device():
