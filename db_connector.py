@@ -378,7 +378,8 @@ def add_state():
     #default state information
     state_content=format_state(state_info)
     state_content["device_name"] = request.args.get("device_name")
-    return render_template('state_helper.html', config=CONSTANTS, state_content=state_content, new=True, devices=get_device_names())  
+    beamline = get_beamline(request.args.get("device_name"))
+    return render_template('state_helper.html', config=CONSTANTS, state_content=state_content, new=True)  
 
 @db_handler.route("/new_device/", methods=["POST", "GET"])
 def new_device():
@@ -424,7 +425,7 @@ def format_state(states):
     try:
         if isinstance(states, list):
             device_name = session.query(
-                Devices.name
+                Devices.name, Devices.access_group
                 ).join(
                     DeviceStates
                 ).filter(
@@ -432,17 +433,24 @@ def format_state(states):
                 ).one()
         elif isinstance(states, dict):
             device_name = session.query(
-                Devices.name
+                Devices.name, Devices.access_group
                 ).join(
                     DeviceStates
                 ).filter(
                     DeviceStates.state_id==states['id']
                 ).one()
-        state_content = {"device_name":device_name[0], "titles":CONSTANTS.state_titles, "states":states}
+        print(device_name)
+        state_content = {"device_name":device_name[0], "beamline":device_name[1], "titles":CONSTANTS.state_titles, "states":states}
     except:
         state_content = {"titles":CONSTANTS.state_titles, "states":states}
     session.close()
     return state_content
+
+def get_beamline(device_name):
+    session = Session()
+    access_group = session.query(Devices.access_group).filter(Devices.name==device_name).all()
+    session.close()
+    return access_group if access_group else None
 
 def format_device(devices):
     """
@@ -627,8 +635,8 @@ def create_state_object(state_name, state):
     2) setting defaults based on CONSTANTS configuration file
     """
     #Check for unique state name
-    #if not check_state_name(state_name):
-        #return None
+    if check_state_name(state_name):
+        return None
     #Set Defaults if missing
     nBeamClassRange, neVRange, nTran, nRate, ap_name = state[3:8]
     if not nBeamClassRange:

@@ -35,15 +35,7 @@
         Adding New State for Device:
       </div>
       <div class="col-sm-2">
-        <select name=device_select method="post" action="/">
-          {% for device in devices %}
-            {% if device == state_content['device_name'] %}
-              <option value= "{{ device }}" SELECTED>{{ device }}</option>"
-            {% else %}
-            <option value= "{{ device }}">{{ device }}</option>"
-            {% endif %}
-          {% endfor %}
-        </select>
+        <input type="text" name="s_beam" value="{{ state_content['device_name'] }}" readonly>
       </div>
     </div>
   {% endif %}
@@ -83,7 +75,11 @@
             <tr>
               <td><th>{{state_content["titles"][2]}}</th></td>
               <td>
-                <input type="text" name="s_beam" value="{{ state_content['states']['beamline'] }}" readonly>
+                {% if new %}
+                  <input type="text" name="s_beam" value="{{ beamline }}" readonly>
+                {% else %}
+                  <input type="text" name="s_beam" value="{{ state_content['states']['beamline'] }}" readonly>
+                {% endif %}
               </td>
             </tr>
             <!-- Beam Class -->           
