@@ -3,24 +3,34 @@
 
 {% block content %}
 <!-- Device to State Dropdown Selector-->
-  <div class="container border">
-    <div class="container">
+<div class="container-fluid border">
+    <div class="row">
       {% if message %}
         <h4 class="text-success">{{ message }}</h4>
       {% endif %}
-
     </div>
-    <div class="container">
-      <h3>Devices and States</h3> 
-      <div class="border border-light rounded">
+    <div class="row">
+      <h3>Devices</h3> 
+    </div>
+    <div class="row">
+      <div class="col-3 border border-light rounded">
         <form action="/state_info/" name="device_states_form" method="post">
           <h5>Select a Device</h5>
-          <SELECT name="device_id">
+          <div class="input-group">
+            <SELECT class="form-select" name="device_id">
             {% for d in devices %}
               <OPTION value={{d[0]}} class="dropdown"> {{d[1]}}</OPTION>
             {% endfor %}
-          </SELECT>
-          <button class="button" name="device_state_button" type="submit">Get States</button>
+            </SELECT>
+            <button class="btn btn-light btn-outline-dark" name="device_state_button" type="submit">Get States</button>
+          </div>
+        </form>
+      </div>
+      <div class="col-1"></div>
+      <div class="col-3 border border-light rounded">
+        <form action="/new_device/" name="new_dev" method="post">
+          <h5>Create a New Device</h5>
+          <button class="btn btn-primary btn-outline-light" name="new_dev_button" type="submit">New</button>
         </form>
       </div>
     </div>
@@ -41,75 +51,71 @@
             <OPTION value={{device_states[0][0]}} class="dropdown">{{device_states[0][0]}}</OPTION>
           {% endif %}
         </SELECT>
-        <button class="button" name="state_info_button" type="submit">State Info</button>
+        <button class="btn btn-light btn-outline-dark" name="state_info_button" type="submit">State Info</button>
       </form>
       {% endif %}
     </div>
   </div>
 
   <!-- Search Bars -->
-  <div class="container border">
+  <div class="container-fluid border">
     <h3>Search by Name</h3> 
-      <!-- Search bar for states -->
-    <div class="row">
-      <div class="border border-light rounded">
-        <h5>State Search</h5>
-        <form action="/state_search_results/" method="post">
-          <div class="row">
-            <div class="col-sm-2">     
-              Name (full or partial):
-            </div>
-            <div class="col-sm-2">     
-              <input name="state_name" value=""></input>
-            </div>
-            <div class="col">
-              <button class="button" name="state_submit_button" type="submit">Search</button>
-            </div>
+    <!-- Search bar for states -->
+    <div class="row border border-light rounded">
+      <h5>State Search</h5>
+      <form action="/state_search_results/" method="post">
+        <div class="form-group">
+          <div class="input-group">
+            <label for="state_name" class="col-2 col-form-label">Name (full or partial):</label>
+            <span class="col-4">
+              <input type="text" class="form-control" name="state_name" id="state_name" value=""></input>
+            </span>
+            <button class="btn btn-light btn-outline-dark" name="state_submit_button" type="submit">Search</button>
+            <button class="btn btn-light btn-outline-primary" name="all_submit_button" type="submit">All</button>
           </div>
-        </p></form>
-      </div>
+        </div>
+      </form>
     </div>
     <!-- Search bar for devices-->
-    <div class="row">
-      <div class="border border-light rounded">
-        <h5>Device Search</h5>
-        <form action="/device_search_results/" method="post">
-          <div class="row">
-            <div class="col-sm-2">          
-              Name (full or partial):
-            </div>
-            <div class="col-sm-2">          
-              <input name="device_name" value=""></input>
-            </div>
-            <div class="col">
-              <button class="button" name="dev_submit_button" type="submit">Search</button>
-            </div>
+    <div class="row border border-light rounded">
+      <h5>Device Search</h5>
+      <form action="/device_search_results/" method="post">
+        <div class="form-group">
+          <div class="input-group">
+            <label for="device_name" class="col-2 col-form-label">Name (full or partial):</label>
+            <span class="col-4">
+              <input type="text" class="form-control" name="device_name" id="device_name" value=""></input>
+            </span>
+            <button class="btn btn-light btn-outline-dark" name="dev_submit_button" type="submit">Search</button>
+            <button class="btn btn-light btn-outline-primary" name="all_dev_submit_button" type="submit">All</button>
           </div>
-        </p></form>
-      </div>
+        </div>
+      </form>
     </div>
   </div>
   <!-- Search by type -->
-  <div class="container border">
-    <h3>Search by Device Type</h5>
-    <form action="/devices_by_type/" method="post">
-      <div class="row">
-        <div class="col-sm-2">
-          Type:
+  <div class="container-fluid border">
+    <div class="row">
+      <h3>Search by Device Type</h5>
+      <form action="/devices_by_type/" method="post">
+        <div class="form-group">
+            <div class="input-group">
+              <label for="device_type" class="col-2 col-form-label">Type:</label>
+              <div class="col-4">
+                <select class="form-select" name="device_type" id="device_type" method="post" action="/">
+                  {% for dt in config["device_types"] %}
+                    <option value= "{{ dt }}">{{ dt }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <button class="btn btn-light btn-outline-dark" name="type_submit_button" type="submit">Search</button>
+            </div>
+          </div>
         </div>
-        <div class="col-sm-2">
-          <select name="device_type" method="post" action="/">
-            {% for dt in config["device_types"] %}
-              <option value= "{{ dt }}">{{ dt }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="col">
-          <button class="button" name="type_submit_button" type="submit">Search</button>
-        </div>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
+</div>
 
 
 {% endblock %}

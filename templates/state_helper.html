@@ -2,50 +2,42 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container border">
+<div class="container-fluid">
   {% if not new %}
     <!-- Page Title/Information for Form-->
-    <div class="row">
-      <h4>State Name: {{ state_content['states']['name'] }}</h4>
-    </div>
-    <div class="row">
-      <div class="col-sm">
-        <h5> ID: {{ state_content['states']['id'] }}</h5>
+    <div class="container-fluid border border-secondary">
+      <div class="row">
+        <div class="col-9">
+          <h4>State Name: {{ state_content['states']['name'] }}</h4>
+        </div>
+        <!-- History Selector -->
+        <div class="col-1 offset-1">
+          <form action="/state_history/" method="post">
+            <input type="hidden" name="state_id" value="{{ state_content['states']['id'] }}"></input>
+            <input type="hidden" name="device_name" value="{{ state_content['device_name'] }}"></input>
+            <button class="btn btn-light btn-outline-primary" name="history" type="submit">History</button>
+          </form>
+        </div>
       </div>
-      <!-- History Selector -->
-      <div class="col-sm float-start">
-        <form action="/state_history/" method="post">
-          <input type="hidden" name="state_id" value="{{ state_content['states']['id'] }}"></input>
-          <input type="hidden" name="device_name" value="{{ state_content['device_name'] }}"></input>
-          <button class="button" name="history" type="submit">History</button>
-        </form>
-      </div>
-      <div class="col">
-        Device ID:
-      </div>
-      <div class="col">
-        <input disabled name="device_name" value="{{ state_content['device_name'] }}"></input>
-      </div>
-      <div class="col"></div>
-    <form action="/update_state/" name="update_state_form" method="post">
-  {% elif new %}
-  <form action="/update_state/" name="update_state_form" method="post">
-    <div class="row">
-      <div class="col-sm-3">
-        Adding New State for Device:
-      </div>
-      <div class="col-sm-2">
-        <select name=device_select method="post" action="/">
-          {% for device in devices %}
-            {% if device == state_content['device_name'] %}
-              <option value= "{{ device }}" SELECTED>{{ device }}</option>"
-            {% else %}
-            <option value= "{{ device }}">{{ device }}</option>"
-            {% endif %}
-          {% endfor %}
-        </select>
-      </div>
-    </div>
+      <div class="row">
+        <div class="col-2">
+          <span text> Device ID: {{ state_content['states']['id'] }}</span>
+        </div>
+        <div class="col-2">
+          <input disabled name="device_name" value="{{ state_content['device_name'] }}"></input>
+        </div>
+        <div class="col-1"></div>
+      <form action="/update_state/" name="update_state_form" method="post">
+    {% elif new %}
+      <form action="/update_state/" name="update_state_form" method="post">
+        <div class="row">
+          <div class="col-sm-3">
+            Adding New State for Device:
+          </div>
+          <div class="col-sm-2">
+            <input type="text" name="s_beam" value="{{ state_content['device_name'] }}" readonly>
+          </div>
+        </div>
   {% endif %}
   {% if message %}
     <div class="col-xl text-end">
@@ -53,11 +45,12 @@
     </div>
   {% endif %}
     </div>
+  </div>
 <!-- State Edit Form -->
-  <div class="container">
+  <div class="container-fluid">
       <input type="hidden" name="device_name" value="{{ state_content['device_name'] }}"></input>
       <div class="row table-responsive">
-        <table class="table table-striped border" id="states" >
+        <table class="table table-striped border border-secondary" id="states" >
           <tbody>
             {% if not new %}
               <tr>
@@ -66,6 +59,7 @@
                   <input type="hidden" name="s_id" value="{{ state_content['states']['id'] }}"></input>
                 <text>{{ state_content["states"]['id'] }}</text>
                 </td>
+                <td></td>
               </tr>
             {% elif new %}
               <input type="hidden" name="s_id" value="None"></input>
@@ -73,51 +67,55 @@
             <tr>
                 <td><th>{{state_content["titles"][1]}}</th></td>
               {% if new %}
-                <td>{{ state_content['device_name'] }}-<input type="text" name="s_name" value="{{ state_content['states']['name'] }}"></td></tr>
+                <td>{{ state_content['device_name'] }}-<input type="text" name="s_name" value="{{ state_content['states']['name'] }}"></td>
+                <td></td>
               {% else %}
                 <td><input type="text" name="s_name" value="{{ state_content['states']['name'] }}">
                 <!--<td><input type="text" name="s_name" disabled value="{{ state_content['states']['name'] }}">-->
                   <input type="text" name="s_name" hidden value="{{ state_content['states']['name'] }}">
-                </td></tr>
+                </td>
+                <td></td>
               {% endif %}
+            </tr>
             <tr>
               <td><th>{{state_content["titles"][2]}}</th></td>
-              <td><select name="s_beam" method="post" action="/">
-                {% for bl in config["beamlines"] %}
-                  {% if bl == state_content['states']['beamline'] %}
-                    <option value= "{{ bl }}" SELECTED>{{ bl }}</option>"
-                  {% else %}
-                    <option value= "{{ bl }}">{{ bl }}</option>"
-                  {% endif %}
-                {% endfor %}
-              </select></td>
+              <td>
+                {% if new %}
+                  <input type="text" name="s_beam" value="{{ state_content['beamline'] }}" readonly>
+                {% else %}
+                  <input type="text" name="s_beam" value="{{ state_content['states']['beamline'] }}" readonly>
+                {% endif %}
+              </td>
+              <td></td>
             </tr>
             <!-- Beam Class -->           
             <tr>
-              <td><th>{{state_content["titles"][3]}}</th></td>
+              <td>
+                <th>{{state_content["titles"][3]}}</th>
+              </td>
               <!-- Beam Class Checkboxes -->
               <td><div class="row g-0">
-                <div class="col">
-                {% if new %}
-                  {% for bc_value in config.form_defaults['nBeamClassRange'] %}
-                    <input type="checkbox" class="btn-check" value="1" name="bc-{{ loop.index0 }}-val" id="bc-{{ loop.index0 }}" {{ "checked" if bc_value=="1" }} autocomplete="off" >
-                    <label class="btn-color btn" for="bc-{{ loop.index0 }}">
-                      {{ config.form_defaults['nBeamClassRange'] | length - loop.index + 1}}
-                    </label>
-                  {% endfor %}
-                {% else %}
-                  {% for bc_value in state_content['states']['nBeamClassRange'] %}
+                <div class="btn-group">
+                  {% if new %}
+                    {% for bc_value in config.form_defaults['nBeamClassRange'] %}
                       <input type="checkbox" class="btn-check" value="1" name="bc-{{ loop.index0 }}-val" id="bc-{{ loop.index0 }}" {{ "checked" if bc_value=="1" }} autocomplete="off" >
-                      <label class="btn-color btn" for="bc-{{ loop.index0 }}">
+                      <label class="btn-color btn-outline-light btn" for="bc-{{ loop.index0 }}">
+                        {{ config.form_defaults['nBeamClassRange'] | length - loop.index + 1}}
+                      </label>
+                    {% endfor %}
+                  {% else %}
+                    {% for bc_value in state_content['states']['nBeamClassRange'] %}
+                      <input type="checkbox" class="btn-check" value="1" name="bc-{{ loop.index0 }}-val" id="bc-{{ loop.index0 }}" {{ "checked" if bc_value=="1" }} autocomplete="off" >
+                      <label class="btn-color btn-outline-light btn" for="bc-{{ loop.index0 }}">
                         {{ state_content['states']['nBeamClassRange'] | length - loop.index + 1}}
                       </label>
-                  {% endfor %}
-                {% endif %}
+                    {% endfor %}
+                  {% endif %}
                 </div>
               </div></td>
               <div class="col">
                 <td>
-                  <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#BC_info">Info</button>
+                  <button type="button" class="btn btn-color btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#BC_info">Info</button>
                 </td>
               </div>
             </tr>
@@ -126,114 +124,230 @@
               <td><th>{{state_content["titles"][4]}} (keV)</th></td>
               <!-- EV Range Checkboxes -->
               <td><div class="row g-0">
-                <div class="col">
-                  <label class="btn" style="font-size: 11px; padding: 0;" disabled>HXR<br>SXR</label>
+                <div class="btn-group">
                   {% if new %}
                     {% for ev_value in config.form_defaults['neVRange'] %}
                     <input type="checkbox" class="btn-check" value="1" name="ev-{{ loop.index0 }}-val" id="ev-{{ loop.index0 }}" {{ "checked" if ev_value=="1" }} autocomplete="off" />
-                    <label class="btn-color btn" style="font-size: 11px; padding: 0; width: {{ 80/config.form_defaults['neVRange'] | length }}%;" for="ev-{{ loop.index0 }}">
-                      {{config.ev_ranges['HXR'][config.form_defaults['neVRange'] | length - loop.index0 - 1 ]}}<br>
-                      {{config.ev_ranges['SXR'][config.form_defaults['neVRange'] | length - loop.index0 - 1 ]}}
+                    <label class="btn-color btn-outline-light btn" style="font-size: 12px; padding: 0; width: {{ 80/config.form_defaults['neVRange'] | length }}%;" for="ev-{{ loop.index0 }}">
+                      {{config.ev_ranges['SXR'][config.form_defaults['neVRange'] | length - loop.index0 - 1 ]}}<br>
                     </label>
                     {% endfor %}
                   {% else %}
                     {% for ev_value in state_content['states']['neVRange'] %}
                         <input type="checkbox" class="btn-check" value="1" name="ev-{{ loop.index0 }}-val" id="ev-{{ loop.index0 }}" {{ "checked" if ev_value=="1" }} autocomplete="off" />
-                        <label class="btn-color btn" style="font-size: 11px; padding: 0; width: {{ 80/state_content['states']['neVRange'] | length }}%;" for="ev-{{ loop.index0 }}">
-                          {{config.ev_ranges['HXR'][state_content['states']['neVRange'] | length - loop.index0 - 1 ]}}<br>
-                          {{config.ev_ranges['SXR'][state_content['states']['neVRange'] | length - loop.index0 - 1 ]}}
+                        <label class="btn-color btn-outline-light btn" style="font-size: 12px; padding: 0; width: {{ 80/state_content['states']['neVRange'] | length }}%;" for="ev-{{ loop.index0 }}">
+                        {% if state_content['states']['beamline'] in config.beamlines['SXR'] %}
+                          {{ config.ev_ranges['SXR'][state_content['states']['neVRange'] | length - loop.index0 - 1 ]}}<br>
+                        {% else %}
+                          {{ config.ev_ranges['HXR'][state_content['states']['neVRange'] | length - loop.index0 - 1 ]}}<br>
+                        {% endif %}
                         </label>
                     {% endfor %}
                   {% endif %}
                 </div>
               </td>
+              <td>
+                {% if state_content['states']['beamline'] in config.beamlines['SXR'] %}
+                  <label>SXR</label>
+                {% else %}
+                  <label>HXR</label>
+                {% endif %}
+              </td>
             </tr>
             <!-- NTran -->
             <tr>
               <td><th>{{state_content["titles"][5]}}</th></td>
-              {% if new %}
-                <td><input type="text" name="s_nt" value="{{ config.form_defaults['nTran'] }}">   Note: 1 is full transmission
-              {% else %}
-                <td><input type="text" name="s_nt" value="{{ state_content['states']['nTran'] }}">    Note: 1 is full transmission
-              {% endif %}
-              </td></tr>
+              <td>
+                <div class="col-7">
+                  <div class="input-group">
+                    {% if new %}
+                      <input type="text" name="s_nt" class="form-control" aria-describedby="addon-wrapping" value="{{ config.form_defaults['nTran'] }}"> 
+                    {% else %}
+                      <input type="text" name="s_nt" class="form-control" aria-describedby="addon-wrapping" value="{{ state_content['states']['nTran'] }}"> 
+                    {% endif %}
+                    <div class="input-group-append">
+                      <span class="input-group-text" id="basic-addon2">Note: 1 is full transmission</span>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td></td>
+            </tr>
             <!-- NRate -->
             <tr>
               <td><th>{{state_content["titles"][6]}}</th></td>
-              <td><select name=s_nr method="post" action="/">
-                {% for nr in config.form_defaults["nRate"] %}
-                  {% if nr == state_content['states']['nRate'] %}
-                    <option value= "{{ nr }}" SELECTED>{{ nr }}</option>
-                  {% else %}
-                    <option value= "{{ nr }}">{{ nr }}</option>
-                  {% endif %}
-                {% endfor %}
-              </select> Hz</td>
+              <td>
+                <div class="col-7">
+                  <div class="input-group mb-3">
+                    <select class="form-select" name="s_nr" id="s_nr">
+                      {% for nr in config.form_defaults["nRate"] %}
+                        {% if nr == state_content['states']['nRate'] %}
+                          <option value= "{{ nr }}" selected>{{ nr }}</option>
+                        {% else %}
+                          <option value= "{{ nr }}">{{ nr }}</option>
+                        {% endif %}
+                      {% endfor %} 
+                    </select>
+                    <label class="input-group-text" for="s_nr">Hz</label>
+                  </div>
+                </div>
+              </td>
+              <td></td>
             </tr>
             <!-- Aperture Name -->
             <tr>
               <td><th>{{state_content["titles"][7]}}</th></td>
-              <td><select name="s_as" method="post" action="/">
-                {% for ap in config.form_defaults["aperture"] %}
-                  {% if ap == state_content['states']['ap_name'] %}
-                    <option value= "{{ ap }}" SELECTED>{{ ap }}</option> 
-                  {% else %}
-                    <option value= "{{ ap }}">{{ ap }}</option>
-                  {% endif %}
-                {% endfor %}
-              </select></td>
-              </td></tr>
+              <td>
+                <div class="col-7">
+                  <div class="input-group mb-3">
+                    <select class="form-select" name="s_as" id="s_as">
+                      {% for ap in config.form_defaults["aperture"] %}
+                        {% if ap == state_content['states']['ap_name'] %}
+                          <option value= "{{ ap }}" SELECTED>{{ ap }}</option> 
+                        {% else %}
+                          <option value= "{{ ap }}">{{ ap }}</option>
+                        {% endif %}
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+              </td>
+              <td></td>
+            </tr>
             <!-- Aperture Values -->
             <tr>
               <td><th>{{state_content["titles"][8]}}</th></td>
-              <td><input type="text" name="s_ayg" value="{{ state_content['states']['ap_ygap'] }}"> mm
-              </td></tr>            
+              <td>
+                <div class="col-7">
+                  <div class="input-group">
+                    <input type="text" name="s_ayg" class="form-control" aria-describedby="addon-wrapping" value="{{ state_content['states']['ap_ygap'] }}"> 
+                    <div class="input-group-append">
+                      <span class="input-group-text">mm</span>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td></td>
+            </tr>            
             <tr>
-                <td><th>{{state_content["titles"][9]}}</th></td>
-                <td><input type="text" name="s_ayc" value="{{ state_content['states']['ap_ycenter'] }}"> mm
-                </td></tr>
+              <td><th>{{state_content["titles"][9]}}</th></td>
+              <td>
+                <div class="col-7">
+                  <div class="input-group">
+                    <input type="text" name="s_ayc" class="form-control" aria-describedby="addon-wrapping" value="{{ state_content['states']['ap_ycenter'] }}"> 
+                    <div class="input-group-append">
+                      <span class="input-group-text">mm</span>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td></td>
+            </tr>
             <tr>
               <td><th>{{state_content["titles"][10]}}</th></td>
-              <td><input type="text" name="s_axg" value="{{ state_content['states']['ap_xgap'] }}"> mm
-              </td></tr>
+              <td>
+                <div class="col-7">
+                  <div class="input-group">
+                    <input type="text" name="s_axg" class="form-control" aria-describedby="addon-wrapping" value="{{ state_content['states']['ap_xgap'] }}"> 
+                    <div class="input-group-append">
+                      <span class="input-group-text">mm</span>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td></td>
             <tr>
               <td><th>{{state_content["titles"][11]}}</th></td>
-              <td><input type="text" name="s_axc" value="{{ state_content['states']['ap_xcenter'] }}"> mm
-              </td></tr>
+              <td>
+                <div class="col-7">
+                  <div class="input-group">
+                    <input type="text" name="s_axc" class="form-control" aria-describedby="addon-wrapping" value="{{ state_content['states']['ap_xcenter'] }}"> 
+                    <div class="input-group-append">
+                      <span class="input-group-text">mm</span>
+                    </div>
+                  </div>
+                </div>
+              </td>   
+              <td></td>           
+            </tr>
             <!-- Other Data-->
             <tr>
               <td><th>{{state_content["titles"][12]}}</th></td>
-              <td><input type="text" name="s_apn" value="{{ state_content['states']['damage_limit'] }}">
-              </td></tr>
+              <td>
+                <div class="col-7">
+                  <div class="input-group">
+                    <input type="text" name="s_apn" class="form-control" value="{{ state_content['states']['damage_limit'] }}">
+                  </div>
+                </div>
+              </td>
+              <td></td>
+            </tr>
             <tr>
               <td><th>{{state_content["titles"][13]}}</th></td>
-              <td><input type="text" name="s_pen" value="{{ state_content['states']['pulse_energy'] }}">
-              </td></tr>
+              <td>
+                <div class="col-7">
+                  <div class="input-group">
+                    <input type="text" name="s_pen" class="form-control" value="{{ state_content['states']['pulse_energy'] }}">
+                  </div>
+                </div>
+              </td>
+              <td></td>
+            </tr>
             <tr>
               <td><th>{{state_content["titles"][14]}}</th></td>
-              <td><input type="text" name="s_on" value="{{ state_content['states']['notes'] }}">
-              </td></tr>       
+              <td>
+                <div class="col-7">
+                  <div class="input-group">
+                    <input type="text" name="s_on" class="form-control" value="{{ state_content['states']['notes'] }}">
+                  </div>
+                </div>
+              </td>
+              <td></td>
+            </tr>   
             <tr>
               <td><th>{{state_content["titles"][15]}}</th></td>
-              {% if state_content['states']['special'] %}
-                <td><input type="checkbox" checked name="s_sp" value="special"></input>
-              {% else %}
-                <td><input type="checkbox" name="s_sp" value="special"></input>
-              {% endif %}
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note: Select if edge case, include reasoning in notes field</td>
+              <td>
+                <div class="col-7">
+                  <div class="input-group mb-3">
+                    <div class="input-group-text">
+                      {% if state_content['states']['special'] %}
+                        <input class="form-check-input mt-0" name="s_sp" type="checkbox" value="special" checked>
+                      {% else %}
+                        <input class="form-check-input mt-0" name="s_sp" type="checkbox" value="special">
+                      {% endif %}
+                    </div>
+                    <input type="text" class="form-control" value="Note: Select if edge case, include reasoning in notes field">
+                  </div>
+                </div>
+              </td>
+              <td></td>
             </tr>     
             <tr>
               <td><th>{{state_content["titles"][16]}}</th></td>
-              <td><input type="text" name="s_rt" value="{{ state_content['states']['reactive_temp'] }}">
-              </td></tr>     
+              <td>  
+                <div class="col-7">
+                  <div class="input-group">
+                    <input type="text" name="s_rt" class="form-control" value="{{ state_content['states']['reactive_temp'] }}">
+                  </div>
+                </div>
+              </td>
+              <td></td>
+            </tr>     
             <tr>
               <td><th>{{state_content["titles"][17]}}</th></td>
-              <td><input type="text" name="s_rp" value="{{ state_content['states']['reactive_pressure'] }}">
-              </td></tr>  
+              <td>
+                <div class="col-7">
+                  <div class="input-group">
+                    <input type="text" name="s_rp" class="form-control" value="{{ state_content['states']['reactive_pressure'] }}">
+                  </div>
+                </div>
+              </td>
+              <td></td>
+            </tr>  
           </tbody>
         </table>
       </div>
-      <button name="update_state_button" type="submit">Submit</button>
+      <button name="update_state_button" class="btn btn-primary btn-outline-light" type="submit">Submit</button>
     </form>
   </div>
 </div>

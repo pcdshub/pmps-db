@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from db_connector import db_handler, export_page
+from db_connector import db_handler, search
 
 
 def create_app():
@@ -8,7 +8,7 @@ def create_app():
 
     @app.route("/")
     def base():
-        return export_page()
+        return search()
     return app
 
 

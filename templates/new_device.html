@@ -3,12 +3,13 @@
 
 <!-- TODO: Error handling for original device name -->
 {% block content %}
-<div class ="container">
-  {% if msg %}
-    <text>{{ msg }}</text>
-  {% endif %}
-</div>
-<div class="container">
+<div class="container-fluid">
+  <div class ="row">
+    {% if msg %}
+      <text>{{ msg }}</text>
+    {% endif %}
+  </div>
+  <div class="row">
     <form action="/add_device/" name="add_device_form" method="post">
       <div class="row table-responsive">
         <table class="table table-striped border" id="devices" >
@@ -59,4 +60,5 @@
       <button name="new_device_button" type="submit">Submit</button>
     </form>
   </div>
+</div>
 {% endblock %}

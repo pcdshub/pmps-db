@@ -10,38 +10,32 @@
   </head>
   <body>
     <!-- Homerow including navigation buttons at top of all pages -->
-    <div class="container">
+    <div class="container-fluid">
       {% block homerow %}
-      <div class="row border bg-info mb-1 text-white">
-        <div class="col-sm-1">
-          <form action="/export_page/">
-            <button class="rounded" name="home" type="submit">Config</button>
-          </form>
+      <div class="row gx-5 border bg-info py-1">
+        <div class="btn-group col-1">
+          <button class="btn btn-light btn-outline-danger" onclick="goBack()">Back</button>
         </div>
-        <!-- Device&State Search Page -->
-        <div class="col-sm-1">
-          <form action="/device_info/" method="get">
-            <button class="button rounded" name="devices" type="submit">Browse</button>
-          </form>
-        </div>
-        <div class="col-sm-1">
-          <button class="rounded" onclick="goBack()">Back</button>
+        <div class="btn-group col-3">
+          <!-- Device&State Search Page -->
+          <a href="/export_page/" class="btn btn-light btn-outline-secondary" name="home" role="button">Config</a>
+          <a href="/search/" class="btn btn-light btn-outline-dark" name="search" role="button">Search</a>
+          <a href="/device_search_results/" class="btn btn-light btn-outline-dark" name="devices" role="button">Devices</a>
         </div>
       </div>
       {% endblock %}
     </div>
-    <div class="container">
+    <div class="container-fluid">
       <title>PMPS</title>
       {% if content %}
         <h1>{{ content }}!</h1>
       {% else %}
-        <div class="display-6" color="gray">PMPS Configuration Database</class>
+        <div class="display-6" color="gray">PMPS Configuration Database</div>
       {% endif %}
-    </div>
-    <div class="container">
-      <span></span>
-    </div>
-      {% block content %}{% endblock %}
+      <div class="container-fluid">
+        <span></span>
+      </div>
+    {% block content %}{% endblock %}
     </div>
     {% block scripts %}
       <script>
