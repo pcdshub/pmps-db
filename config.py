@@ -13,7 +13,7 @@ beamlines = {
     "HXR":[]
     }
 device_types = ["ATM", "B4C/Si MIRROR", "EXS YAG", "GAS ATTEN", "LASER INCOUPLING", "PPM", "REF LASER", "RTDS", "SCATTER SLIT", "WFS TARGET", "XPIM"]
-plcs = ["plc-kfe-gatt", "plc-kfe-motion", "plc-kfe-rix-motion", "plc-rixs-optics", "plc-tmo-motion"]
+plcs = ["plc-kfe-gatt", "plc-kfe-motion", "plc-kfe-rix-motion", "plc-rixs-optics", "plc-tmo-motion", "plc-tmo-optics"]
 
 #Confluence
 ev_ranges = {"HXR":[1,1.7,2.1,2.5,3.8,4,5,7,7.5,7.7,8.9,10,11.1,12,13,13.5,14,16.9,18,20,22,24,25,25.5,26,27,28,28.5,29,30,60,90],
