@@ -18,6 +18,10 @@
             <button class="btn btn-light btn-outline-primary" name="history" type="submit">History</button>
           </form>
         </div>
+        <div class="col">
+            <button class="btn btn-danger btn-outline-light" name="delete" data-bs-toggle="modal" data-bs-target="#deleteStateModal">Delete State</button>
+          </form>
+        </div>
       </div>
       <div class="row">
         <div class="col-2">
@@ -35,7 +39,7 @@
             Adding New State for Device:
           </div>
           <div class="col-sm-2">
-            <input type="text" name="s_beam" value="{{ state_content['device_name'] }}" readonly>
+            <input type="text" name="s_beam" value="{{ state_content['beamline'] }}" readonly>
           </div>
         </div>
   {% endif %}
@@ -65,25 +69,34 @@
               <input type="hidden" name="s_id" value="None"></input>
             {% endif %}
             <tr>
-                <td><th>{{state_content["titles"][1]}}</th></td>
-              {% if new %}
-                <td>{{ state_content['device_name'] }}-<input type="text" name="s_name" value="{{ state_content['states']['name'] }}"></td>
-                <td></td>
-              {% else %}
-                <td><input type="text" name="s_name" value="{{ state_content['states']['name'] }}">
-                <!--<td><input type="text" name="s_name" disabled value="{{ state_content['states']['name'] }}">-->
-                  <input type="text" name="s_name" hidden value="{{ state_content['states']['name'] }}">
-                </td>
-                <td></td>
-              {% endif %}
+              <td><th>{{state_content["titles"][1]}}</th></td>
+              <td>  
+                <div class="col-7">
+                  <div class="input-group">
+                    {% if new %}
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">{{ state_content['device_name'] }}-</div>
+                      </div>
+                      <input type="text" name="s_name" class="form-control" value="{{ state_content['states']['name'] }}">
+                    {% else %}
+                      <input type="text" name="s_name" class="form-control" value="{{ state_content['states']['name'] }}">
+                      <!-- TODO: do I need this hidden? Left over from other form type?
+                      <input type="text" name="s_name" class="form-control" hidden value="{{ state_content['states']['name'] }}"> -->
+                    {% endif %}
+                  </div>
+                </div>
+              </td>
+              <td></td>
             </tr>
             <tr>
               <td><th>{{state_content["titles"][2]}}</th></td>
               <td>
                 {% if new %}
-                  <input type="text" name="s_beam" value="{{ state_content['beamline'] }}" readonly>
+                  <text>{{ state_content['beamline'] }}</text>
+                  <input type="hidden" name="s_beam" value="{{ state_content['beamline'] }}"></input>
                 {% else %}
-                  <input type="text" name="s_beam" value="{{ state_content['states']['beamline'] }}" readonly>
+                  <text>{{ state_content['states']['beamline'] }}</text>
+                  <input type="hidden" name="s_beam" value="{{ state_content['states']['beamline'] }}"></input>
                 {% endif %}
               </td>
               <td></td>
@@ -95,6 +108,15 @@
               </td>
               <!-- Beam Class Checkboxes -->
               <td><div class="row g-0">
+                <div class="btn-toolbar" role="toolbar">
+                  <div class="btn-group col-4 pr-2">
+                    <button type="button" class="btn btn-light btn-outline-primary" onclick="toggleBCOn(this)" >All</button>
+                    <button type="button" class="btn btn-light btn-outline-primary" onclick="toggleBCOff(this)" >None</button>
+                  </div>
+                  <div class="btn-group col-1 pr-2">
+                    <button type="button" class="btn btn-color btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#bcInfo">Info</button>
+                  </div>
+                </div>
                 <div class="btn-group">
                   {% if new %}
                     {% for bc_value in config.form_defaults['nBeamClassRange'] %}
@@ -113,17 +135,19 @@
                   {% endif %}
                 </div>
               </div></td>
-              <div class="col">
-                <td>
-                  <button type="button" class="btn btn-color btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#BC_info">Info</button>
-                </td>
-              </div>
+              <td></td>
             </tr>
             <!-- EV Range-->
             <tr>
               <td><th>{{state_content["titles"][4]}} (keV)</th></td>
               <!-- EV Range Checkboxes -->
               <td><div class="row g-0">
+                <div class="btn-group col-4">
+                  <button type="button" class="btn btn-light btn-outline-primary" onclick="toggleEVOn(this)" >All</button>
+                  <button type="button" class="btn btn-light btn-outline-primary" onclick="toggleEVOff(this)" >None</button>
+                  <button type="button" class="btn btn-color btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#evInfo">Info</button>
+
+                </div>
                 <div class="btn-group">
                   {% if new %}
                     {% for ev_value in config.form_defaults['neVRange'] %}
@@ -328,6 +352,9 @@
                 <div class="col-7">
                   <div class="input-group">
                     <input type="text" name="s_rt" class="form-control" value="{{ state_content['states']['reactive_temp'] }}">
+                    <div class="input-group-append">
+                      <span class="input-group-text">C</span>
+                    </div>
                   </div>
                 </div>
               </td>
@@ -339,6 +366,9 @@
                 <div class="col-7">
                   <div class="input-group">
                     <input type="text" name="s_rp" class="form-control" value="{{ state_content['states']['reactive_pressure'] }}">
+                    <div class="input-group-append">
+                      <span class="input-group-text">torr</span>
+                    </div>
                   </div>
                 </div>
               </td>
@@ -351,87 +381,240 @@
     </form>
   </div>
 </div>
-<!-- Modal -->
-<div class="modal fade" id="BC_info" role="dialog">
-  <div class="modal-dialog w-50 mw-100">
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
-        <h4 class="modal-title">BC Data</h4>
+<!-- BC Modal -->
+<div class="container">
+  <!--   <div id="BCInfo" class="modal hide fade" role="dialog">  -->
+  <div id="bcInfo" class="modal fade" tabindex="-1">
+    <div class="modal-dialog w-50 mw-100">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">BC Data</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table table-responsive">
+            <thead>
+              <tr>
+                <th>Index</th>
+                <th>Display Name</th>
+                <th>∆T (s)</th>
+                <th>dt (s)</th>	
+                <th>Q (pC)</th>	
+                <th>Rate max (Hz)</th>
+                <th>Current (nA)</th>
+                <th>Power @ 4 GeV (W)</th>
+                <th>Int. Energy @ 4 GeV (J)	</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0</td> <td>Beam Off</td>	<td>0.5</td> <td>-</td>	<td>0</td>	<td>0</td>	<td>0</td>	<td>0</td>	<td>0</td>	<td>Beam off, Kickers off</td>
+              </tr>
+              <tr>
+                <td>1</td> <td>Kicker STBY</td> <td>0.5</td> <td>-</td> <td>0</td> <td>0</td> <td>0</td> <td>0</td> <td>0</td>	<td>Beam off, Kickers standby</td>
+              </tr>
+              <tr>
+                <td>2</td> <td>BC1Hz</td> <td>1</td> <td>1</td> <td>350</td> <td>1</td> <td>0.35</td> <td>1.4</td> <td>1.4</td> <td>350 pC x 1 Hz</td>
+              </tr>
+              <tr>
+                <td>3</td> <td>BC10Hz</td> <td>1</td> <td>0.1</td> <td>3500</td> <td>10</td> <td>3.5</td> <td>14</td> <td>14</td> <td>350 pC X 10 Hz</td>
+              </tr>
+              <tr>
+                <td>4</td> <td>Diagnostic</td> <td>0.5</td> <td>-</td> <td>5000</td> <td>-</td> <td>10</td> <td>40</td> <td>20</td> <td>50 pC x 200 Hz</td>
+              </tr>
+              <tr>
+                <td>5</td> <td>BC120Hz</td> <td>0.2</td> <td>0.0083</td> <td>6000</td> <td>120</td> <td>30</td> <td>120</td> <td>24</td> <td>250 pC x 120 Hz</td>
+              </tr>
+              <tr>
+                <td>6</td> <td>Tuning</td> <td>0.2</td> <td>-</td> <td>7000</td> <td>-</td> <td>35</td> <td>140</td> <td>28</td> <td>100 pC X 350 Hz</td>
+              </tr>
+              <tr>
+                <td>7</td> <td>1% MAP</td> <td>0.01</td> <td>-</td> <td>3000</td> <td>-</td> <td>300</td> <td>1200</td> <td>12</td> <td>100 pC X 3 kHz</td>
+              </tr>
+              <tr>
+                <td>8</td> <td>5% MAP</td> <td>0.003</td> <td>-</td> <td>4500</td> <td>-</td> <td>1500</td> <td>6000</td> <td>18</td> <td>100 pC x 15 kHz</td>
+              </tr>
+              <tr>
+                <td>9</td> <td>10% MAP</td> <td>0.001</td> <td>-</td> <td>3000</td> <td>-</td> <td>3000</td> <td>12000</td> <td>12</td> <td>100 pC X 30 kHz</td>
+              </tr>
+              <tr>
+                <td>10</td> <td>25% MAP</td> <td>4e-4</td> <td>-</td> <td>3000</td> <td>-</td> <td>7500</td> <td>30000</td> <td>12</td> <td>100 pC x 75 kHz</td>
+              </tr>
+              <tr>
+                <td>11</td> <td>50% MAP</td>	<td>2e-1</td> <td>-</td> <td>3000</td> <td>-</td> <td>15000</td> <td>60000</td> <td>12</td> <td>100 pC x 150 kHz</td>
+              </tr>
+              <tr>
+                <td>12</td> <td>100% MAP</td> <td>2e-4</td> <td>-</td> <td>6000</td> <td>-</td> <td>30000</td> <td>120000</td> <td>24</td> <td>100 pC x 300 kHz</td>
+              </tr>
+              <tr>
+                <td>13</td> <td>Unlimited</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+              </tr>
+              <tr>
+                <td>14</td> <td>Unlimited</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+              </tr>
+              <tr>
+                <td>15</td> <td>Unlimited</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+        </div>
       </div>
-      <div class="modal-body">
-        <table class="table table-responsive">
-          <thead>
-            <tr>
-              <th>Index</th>
-              <th>Display Name</th>
-              <th>∆T (s)</th>
-              <th>dt (s)</th>	
-              <th>Q (pC)</th>	
-              <th>Rate max (Hz)</th>
-            	<th>Current (nA)</th>
-              <th>Power @ 4 GeV (W)</th>
-            	<th>Int. Energy @ 4 GeV (J)	</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>0</td> <td>Beam Off</td>	<td>0.5</td> <td>-</td>	<td>0</td>	<td>0</td>	<td>0</td>	<td>0</td>	<td>0</td>	<td>Beam off, Kickers off</td>
-            </tr>
-            <tr>
-              <td>1</td> <td>Kicker STBY</td> <td>0.5</td> <td>-</td> <td>0</td> <td>0</td> <td>0</td> <td>0</td> <td>0</td>	<td>Beam off, Kickers standby</td>
-            </tr>
-            <tr>
-              <td>2</td> <td>BC1Hz</td> <td>1</td> <td>1</td> <td>350</td> <td>1</td> <td>0.35</td> <td>1.4</td> <td>1.4</td> <td>350 pC x 1 Hz</td>
-            </tr>
-            <tr>
-              <td>3</td> <td>BC10Hz</td> <td>1</td> <td>0.1</td> <td>3500</td> <td>10</td> <td>3.5</td> <td>14</td> <td>14</td> <td>350 pC X 10 Hz</td>
-            </tr>
-            <tr>
-              <td>4</td> <td>Diagnostic</td> <td>0.5</td> <td>-</td> <td>5000</td> <td>-</td> <td>10</td> <td>40</td> <td>20</td> <td>50 pC x 200 Hz</td>
-            </tr>
-            <tr>
-              <td>5</td> <td>BC120Hz</td> <td>0.2</td> <td>0.0083</td> <td>6000</td> <td>120</td> <td>30</td> <td>120</td> <td>24</td> <td>250 pC x 120 Hz</td>
-            </tr>
-            <tr>
-              <td>6</td> <td>Tuning</td> <td>0.2</td> <td>-</td> <td>7000</td> <td>-</td> <td>35</td> <td>140</td> <td>28</td> <td>100 pC X 350 Hz</td>
-            </tr>
-            <tr>
-              <td>7</td> <td>1% MAP</td> <td>0.01</td> <td>-</td> <td>3000</td> <td>-</td> <td>300</td> <td>1200</td> <td>12</td> <td>100 pC X 3 kHz</td>
-            </tr>
-            <tr>
-              <td>8</td> <td>5% MAP</td> <td>0.003</td> <td>-</td> <td>4500</td> <td>-</td> <td>1500</td> <td>6000</td> <td>18</td> <td>100 pC x 15 kHz</td>
-            </tr>
-            <tr>
-              <td>9</td> <td>10% MAP</td> <td>0.001</td> <td>-</td> <td>3000</td> <td>-</td> <td>3000</td> <td>12000</td> <td>12</td> <td>100 pC X 30 kHz</td>
-            </tr>
-            <tr>
-              <td>10</td> <td>25% MAP</td> <td>4e-4</td> <td>-</td> <td>3000</td> <td>-</td> <td>7500</td> <td>30000</td> <td>12</td> <td>100 pC x 75 kHz</td>
-            </tr>
-            <tr>
-              <td>11</td> <td>50% MAP</td>	<td>2e-1</td> <td>-</td> <td>3000</td> <td>-</td> <td>15000</td> <td>60000</td> <td>12</td> <td>100 pC x 150 kHz</td>
-            </tr>
-            <tr>
-              <td>12</td> <td>100% MAP</td> <td>2e-4</td> <td>-</td> <td>6000</td> <td>-</td> <td>30000</td> <td>120000</td> <td>24</td> <td>100 pC x 300 kHz</td>
-            </tr>
-            <tr>
-              <td>13</td> <td>Unlimited</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
-            </tr>
-            <tr>
-              <td>14</td> <td>Unlimited</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
-            </tr>
-            <tr>
-              <td>15</td> <td>Unlimited</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
-            </tr>
-          </tbody>
-        </tab>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
     </div>
   </div>
 </div>
+
+<!-- EV Modal -->
+<div class="container">
+  <div id="evInfo" class="modal fade" tabindex="-1">
+    <div class="modal-dialog w-50 mw-100">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">EV Data</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table table-responsive">
+            <thead>
+              <tr>
+                <th>EV</th>
+                <th>EV</th>
+                <th>∆T (s)</th>
+                <th>dt (s)</th>	
+                <th>Q (pC)</th>	
+                <th>Rate max (Hz)</th>
+                <th>Current (nA)</th>
+                <th>Power @ 4 GeV (W)</th>
+                <th>Int. Energy @ 4 GeV (J)	</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0</td> <td>Beam Off</td>	<td>0.5</td> <td>-</td>	<td>0</td>	<td>0</td>	<td>0</td>	<td>0</td>	<td>0</td>	<td>Beam off, Kickers off</td>
+              </tr>
+              <tr>
+                <td>1</td> <td>Kicker STBY</td> <td>0.5</td> <td>-</td> <td>0</td> <td>0</td> <td>0</td> <td>0</td> <td>0</td>	<td>Beam off, Kickers standby</td>
+              </tr>
+              <tr>
+                <td>2</td> <td>BC1Hz</td> <td>1</td> <td>1</td> <td>350</td> <td>1</td> <td>0.35</td> <td>1.4</td> <td>1.4</td> <td>350 pC x 1 Hz</td>
+              </tr>
+              <tr>
+                <td>3</td> <td>BC10Hz</td> <td>1</td> <td>0.1</td> <td>3500</td> <td>10</td> <td>3.5</td> <td>14</td> <td>14</td> <td>350 pC X 10 Hz</td>
+              </tr>
+              <tr>
+                <td>4</td> <td>Diagnostic</td> <td>0.5</td> <td>-</td> <td>5000</td> <td>-</td> <td>10</td> <td>40</td> <td>20</td> <td>50 pC x 200 Hz</td>
+              </tr>
+              <tr>
+                <td>5</td> <td>BC120Hz</td> <td>0.2</td> <td>0.0083</td> <td>6000</td> <td>120</td> <td>30</td> <td>120</td> <td>24</td> <td>250 pC x 120 Hz</td>
+              </tr>
+              <tr>
+                <td>6</td> <td>Tuning</td> <td>0.2</td> <td>-</td> <td>7000</td> <td>-</td> <td>35</td> <td>140</td> <td>28</td> <td>100 pC X 350 Hz</td>
+              </tr>
+              <tr>
+                <td>7</td> <td>1% MAP</td> <td>0.01</td> <td>-</td> <td>3000</td> <td>-</td> <td>300</td> <td>1200</td> <td>12</td> <td>100 pC X 3 kHz</td>
+              </tr>
+              <tr>
+                <td>8</td> <td>5% MAP</td> <td>0.003</td> <td>-</td> <td>4500</td> <td>-</td> <td>1500</td> <td>6000</td> <td>18</td> <td>100 pC x 15 kHz</td>
+              </tr>
+              <tr>
+                <td>9</td> <td>10% MAP</td> <td>0.001</td> <td>-</td> <td>3000</td> <td>-</td> <td>3000</td> <td>12000</td> <td>12</td> <td>100 pC X 30 kHz</td>
+              </tr>
+              <tr>
+                <td>10</td> <td>25% MAP</td> <td>4e-4</td> <td>-</td> <td>3000</td> <td>-</td> <td>7500</td> <td>30000</td> <td>12</td> <td>100 pC x 75 kHz</td>
+              </tr>
+              <tr>
+                <td>11</td> <td>50% MAP</td>	<td>2e-1</td> <td>-</td> <td>3000</td> <td>-</td> <td>15000</td> <td>60000</td> <td>12</td> <td>100 pC x 150 kHz</td>
+              </tr>
+              <tr>
+                <td>12</td> <td>100% MAP</td> <td>2e-4</td> <td>-</td> <td>6000</td> <td>-</td> <td>30000</td> <td>120000</td> <td>24</td> <td>100 pC x 300 kHz</td>
+              </tr>
+              <tr>
+                <td>13</td> <td>Unlimited</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+              </tr>
+              <tr>
+                <td>14</td> <td>Unlimited</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+              </tr>
+              <tr>
+                <td>15</td> <td>Unlimited</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td> <td>-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="modal fade" id="deleteStateModal" tabindex="-1">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete Device</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Warning! This will delete the current state" {{ state_content['states']['id'] }} ". THIS CANNOT BE UNDONE.</p>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <form action="/delete_state_db/">
+              <input type="hidden" name="state_id" value="{{ state_content['states']['id'] }}"></input>
+              <input type="hidden" name="device_name" value="{{ state_content['device_name'] }}"></input>
+              <button class="btn btn-danger" name="deletestate" type="submit"> Delete State </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+function goBack() {
+  window.history.back();
+}
+</script>
+
+<script>
+  function toggleBCOn(source) {
+    checkboxes = document.querySelectorAll('[id^="bc-"]');
+
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+      checkboxes[i].checked = true;
+    }
+  }
+  function toggleBCOff(source) {
+    checkboxes = document.querySelectorAll('[id^="bc-"]');
+
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+      checkboxes[i].checked = false;
+    }
+  }
+  function toggleEVOn(source) {
+    checkboxes = document.querySelectorAll('[id^="ev-"]');
+
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+      checkboxes[i].checked = true;
+    }
+  }
+  function toggleEVOff(source) {
+    checkboxes = document.querySelectorAll('[id^="ev-"]');
+
+    for(var i=0, n=checkboxes.length;i<n;i++) {
+      checkboxes[i].checked = false;
+    }
+  }
+  </script>
 {% endblock %}

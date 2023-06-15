@@ -30,10 +30,11 @@
         <form action="/export_all/" method="get">
           <button class="btn btn-light btn-outline-dark  rounded" name="export" type="submit">Download</button>
         </form>
+        <text>Reference this for more information: https://confluence.slac.stanford.edu/display/L2SI/PMPSDB+Client+Transfer+Tool+Manual</text>
       </div>
       {% if plcs %}
       <div class="col-3">
-        <h5>Download One PLC</h5>
+        <h5>Export One PLC</h5>
         <form action="/export_plc/" method="post">
           <div class="input-group">
             <select name=plc_select class="form-select" name="export_plc" method="post" action="/">

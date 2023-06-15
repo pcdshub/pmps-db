@@ -26,11 +26,16 @@
       {% endblock %}
     </div>
     <div class="container-fluid">
-      <title>PMPS</title>
+      <title>PMPS DB</title>
       {% if content %}
         <h1>{{ content }}!</h1>
       {% else %}
-        <div class="display-6" color="gray">PMPS Configuration Database</div>
+        <div class="display-6" color="gray">
+          <span class="border-bottom border-secondary mb-1">
+            PMPS Configuration Database            
+          </span>
+        </div>
+
       {% endif %}
       <div class="container-fluid">
         <span></span>
@@ -43,6 +48,7 @@
         window.history.back();
       }
       </script>
+
     {% endblock %}
   </body>
 </html>
