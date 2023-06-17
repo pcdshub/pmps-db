@@ -280,7 +280,6 @@ def add_device():
         device_content["template"] = None
     devices = get_devices()
     devices.insert(0, ("NONE", "NONE"))
-    print(devices)
 
     """    exists = check_device(name)
     if exists:
@@ -292,8 +291,6 @@ def add_device():
         session.commit()
         dev_id = session.query(Devices.device_id).filter(Devices.name==name).one()
         if dev_template != "NONE":
-            print("We USED DEV TEMP ", dev_template)
-            print("look up results ", dev_id)
             session.close()
             add_template_states(dev_id=dev_id[0], dev_name=name, beamline=ag, dev_template=dev_template)
             return redirect(url_for('db_handler.device_states_display', device_id=dev_id[0]))
@@ -318,40 +315,25 @@ def add_template_states(dev_id=None, dev_name=None, beamline=None, dev_template=
     Uses a previously existing device ID as a template to generate similar states for the new device. Relies on supplied new device ID, 
     device prefix name, and beamline to create new states
     """
-    #TODO: finish implementing this
     session = Session()
     states_info = get_states_by_device_id(device_id=dev_template)
     if not states_info:
         return None
     for state in states_info:
         new_name = dev_name + "-" + (state.name.split("-"))[1]
-        print(state.id, state.name, new_name)
         state.name = new_name
         state.beamline = beamline
-        print(state.id, state.name, new_name)
         #state_obj = States(name=new_name,beamline=beamline,nBeamClassRange=state.nBeamClassRange,neVRange=state.neVRange,nTran=state.nTran,nRate=state.nRate,ap_name=state.ap_name,ap_ygap=state.ap_ygap,ap_ycenter=state.ap_ycenter,ap_xgap=state.ap_xgap,ap_xcenter=state.ap_xcenter,damage_limit=state.damage_limit,pulse_energy=state.pulse_energy,notes=state.notes,special=state.special,reactive_temp=state.reactive_temp,reactive_pressure=state.reactive_pressure)
         session.execute(insert(States).values(name=new_name,beamline=beamline,nBeamClassRange=state.nBeamClassRange,neVRange=state.neVRange,nTran=state.nTran,nRate=state.nRate,ap_name=state.ap_name,ap_ygap=state.ap_ygap,ap_ycenter=state.ap_ycenter,ap_xgap=state.ap_xgap,ap_xcenter=state.ap_xcenter,damage_limit=state.damage_limit,pulse_energy=state.pulse_energy,notes=state.notes,special=state.special,reactive_temp=state.reactive_temp,reactive_pressure=state.reactive_pressure))
    
         session.commit()  
         state_id = session.query(States.id).filter(States.name==new_name).one()
-        print("STATE ID FOR HIST", state_id)
         
         session.execute(insert(DeviceStates).values(device_id=dev_id, state_id=state_id[0]))
         session.commit()
-        #TODO: get state id
         session.execute(insert(History).values(state_id=state_id[0],name=new_name,beamline=beamline,nBeamClassRange=state.nBeamClassRange,neVRange=state.neVRange,nTran=state.nTran,nRate=state.nRate,ap_name=state.ap_name,ap_ygap=state.ap_ygap,ap_ycenter=state.ap_ycenter,ap_xgap=state.ap_xgap,ap_xcenter=state.ap_xcenter,damage_limit=state.damage_limit,pulse_energy=state.pulse_energy,notes=state.notes,special=state.special,reactive_temp=state.reactive_temp,reactive_pressure=state.reactive_pressure))      
         session.commit()
     session.close()
-
-        #create state object with new device id/name info
-        #add state entry in
-        #edit each entry
-        #add device state link
-
-        #add history entry
-        #reuse state add functionality for import?
-
-
     return
 
 
@@ -526,7 +508,6 @@ def delete_state_db():
 
     dev_id = get_device_id_from_name(device_name)
 
-    #how to add device id param
     return redirect(url_for('db_handler.device_states_display', device_id=dev_id))
 
 
@@ -548,10 +529,6 @@ def delete_device_db():
         delete_all_dev_states(dev_id)
     delete_device(dev_id)
     return redirect(url_for('db_handler.search'))
-
-def get_device_state_from_state(state_id):
-
-    return
 
 def get_beamline(device_name):
     session = Session()
@@ -757,7 +734,6 @@ def handle_state(session, state_name, state):
     """
     #Swap dashes with None, clear out empty elements/strings in list
     state = ['' if sub == '-' else sub for sub in state]
-    #TODO: check if state name exists
     state_obj = create_state_object(state_name, state)
     nBC = state[3]
     neV = state[4]

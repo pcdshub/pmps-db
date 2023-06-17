@@ -4,8 +4,9 @@
   <div class="container-fluid">
     <!-- File Selector for Data Import -->
     <div class="row border rounded mb-3">
+      <h5>Import Data</h5>
       <div class="col">
-        <form action="/populate/" method="post" enctype="multipart/form-data">
+        <form action="/populate/" method="post" enctype="multipart/form-data" id="exportForm">
           <label for="formFile" class="form-label">Add Data From File</label>
           <div class="row">
             <div class="col-md-8">
@@ -25,16 +26,9 @@
     </div>
     <div class="row border rounded">
       <!-- Export all State Data, Show Error Message If Needed -->
-      <div class="col-sm-3">
-        <h5>Download all States</h5>
-        <form action="/export_all/" method="get">
-          <button class="btn btn-light btn-outline-dark  rounded" name="export" type="submit">Download</button>
-        </form>
-        <text>Reference this for more information: https://confluence.slac.stanford.edu/display/L2SI/PMPSDB+Client+Transfer+Tool+Manual</text>
-      </div>
       {% if plcs %}
       <div class="col-3">
-        <h5>Export One PLC</h5>
+        <h5>Select One PLC to Download</h5>
         <form action="/export_plc/" method="post">
           <div class="input-group">
             <select name=plc_select class="form-select" name="export_plc" method="post" action="/">
@@ -42,9 +36,18 @@
                 <option value= "{{ plc }}" SELECTED>{{ plc }}</option>"
               {% endfor %}
             </select>
-            <button class="btn btn-light btn-outline-dark rounded" name="PLC" type="submit">Export</button>
+            <button type="submit" class="btn btn-light btn-outline-dark rounded"  name="PLC" >Export</button>
           </div>
         </form>
+      </div>
+      <div class="col-sm-5">
+        <h5>Next Steps</h5>
+        <text>
+          This makes the PLC from the database available to the pmpsdb client transfer tool, which will be used to upload the file to the PLC. </p>
+          PLEASE FOLLOW THE NEXT STEPS to download and activate the parameters on the PLC.</p>
+          Reference this confluence page for more information: <a href="https://confluence.slac.stanford.edu/display/L2SI/PMPSDB+Client+Transfer+Tool+Manual" class="external">PMPS Transfer Manual</a>
+        </text>
+
       </div>
       {% endif %}
     </div>
