@@ -272,24 +272,70 @@ def add_device():
     plc = request.form.get('plc_select')
     ag = request.form.get('ag_select')
     dt = request.form.get('dtype_select')
+    device_content=format_device((0,name, plc, ag, dt))
+    dev_template = request.form.get('template_select')
+    if dev_template != "NONE":
+        device_content["template"] = int(dev_template)
+    else:
+        device_content["template"] = None
+    devices = get_devices()
+    devices.insert(0, ("NONE", "NONE"))
+
     """    exists = check_device(name)
     if exists:
         return render_template('new_device.html', device_content=format_device((0,name, plc, ag)), msg="Device Name Already Exists")"""
     session = Session()
     try:
+        assert( not check_device(session, name))
         session.execute(insert(Devices).values(name=name, plc=plc, device_type=dt, access_group=ag))
         session.commit()
+        dev_id = session.query(Devices.device_id).filter(Devices.name==name).one()
+        if dev_template != "NONE":
+            session.close()
+            add_template_states(dev_id=dev_id[0], dev_name=name, beamline=ag, dev_template=dev_template)
+            return redirect(url_for('db_handler.device_states_display', device_id=dev_id[0]))
+    except AssertionError as error:
+        print(error)
+        session.close()
+        pprint.pprint(device_content)
+        return render_template('new_device.html', config=CONSTANTS, device_content=device_content, plcs=get_plcs(), devices=devices, msg="Device Name Already Exists")
     except IntegrityError:
         print(traceback.format_exc())
         session.close()
-        return render_template('new_device.html', config=CONSTANTS, device_content=format_device((0,name, plc, ag, dt)), plcs=get_plcs(), msg="Device Name Already Exists")
+        return render_template('new_device.html', config=CONSTANTS, device_content=device_content, plcs=get_plcs(), devices=devices, msg="Device Name Already Exists")
     except:
         print(traceback.format_exc())
         session.close()
-        return render_template('new_device.html', config=CONSTANTS, device_content=format_device((0,name, plc, ag, dt)), plcs=get_plcs(), msg="Unable to Add Device")
-    all_devices = session.query(Devices).all()
+        return render_template('new_device.html', config=CONSTANTS, device_content=device_content, plcs=get_plcs(), devices=devices, msg="Unable to Add Device")
+    #TODO: dev id doesnt exist in this scope, change redirect to another spot. may never be hit.
+    return redirect(url_for('db_handler.device_states_display', device_id=dev_id[0]))
+
+def add_template_states(dev_id=None, dev_name=None, beamline=None, dev_template=None):
+    """
+    Uses a previously existing device ID as a template to generate similar states for the new device. Relies on supplied new device ID, 
+    device prefix name, and beamline to create new states
+    """
+    session = Session()
+    states_info = get_states_by_device_id(device_id=dev_template)
+    if not states_info:
+        return None
+    for state in states_info:
+        new_name = dev_name + "-" + (state.name.split("-"))[1]
+        state.name = new_name
+        state.beamline = beamline
+        #state_obj = States(name=new_name,beamline=beamline,nBeamClassRange=state.nBeamClassRange,neVRange=state.neVRange,nTran=state.nTran,nRate=state.nRate,ap_name=state.ap_name,ap_ygap=state.ap_ygap,ap_ycenter=state.ap_ycenter,ap_xgap=state.ap_xgap,ap_xcenter=state.ap_xcenter,damage_limit=state.damage_limit,pulse_energy=state.pulse_energy,notes=state.notes,special=state.special,reactive_temp=state.reactive_temp,reactive_pressure=state.reactive_pressure)
+        session.execute(insert(States).values(name=new_name,beamline=beamline,nBeamClassRange=state.nBeamClassRange,neVRange=state.neVRange,nTran=state.nTran,nRate=state.nRate,ap_name=state.ap_name,ap_ygap=state.ap_ygap,ap_ycenter=state.ap_ycenter,ap_xgap=state.ap_xgap,ap_xcenter=state.ap_xcenter,damage_limit=state.damage_limit,pulse_energy=state.pulse_energy,notes=state.notes,special=state.special,reactive_temp=state.reactive_temp,reactive_pressure=state.reactive_pressure))
+   
+        session.commit()  
+        state_id = session.query(States.id).filter(States.name==new_name).one()
+        
+        session.execute(insert(DeviceStates).values(device_id=dev_id, state_id=state_id[0]))
+        session.commit()
+        session.execute(insert(History).values(state_id=state_id[0],name=new_name,beamline=beamline,nBeamClassRange=state.nBeamClassRange,neVRange=state.neVRange,nTran=state.nTran,nRate=state.nRate,ap_name=state.ap_name,ap_ygap=state.ap_ygap,ap_ycenter=state.ap_ycenter,ap_xgap=state.ap_xgap,ap_xcenter=state.ap_xcenter,damage_limit=state.damage_limit,pulse_energy=state.pulse_energy,notes=state.notes,special=state.special,reactive_temp=state.reactive_temp,reactive_pressure=state.reactive_pressure))      
+        session.commit()
     session.close()
-    return render_template('all_devices.html', config=CONSTANTS, device_content=format_device(all_devices))
+    return
+
 
 def check_device(session, device_name):
     """
@@ -391,7 +437,9 @@ def new_device():
     """
     device_info = ['','','']
     device_content=format_device(device_info)
-    return render_template('new_device.html', config=CONSTANTS, device_content=device_content)  
+    devices=get_devices()
+    devices.insert(0, ("NONE", "NONE"))
+    return render_template('new_device.html', config=CONSTANTS, devices=devices, device_content=device_content)  
 
 @db_handler.route("/state_info/", methods=["POST"])
 def state_info():
@@ -447,6 +495,40 @@ def format_state(states):
         state_content = {"titles":CONSTANTS.state_titles, "states":states}
     session.close()
     return state_content
+
+@db_handler.route("/delete_state_db/", methods=["GET", "POST"])
+def delete_state_db():
+    state_id = request.args.get("state_id")
+    device_name = request.args.get("device_name")
+
+    print("Deleting ", state_id, "from ", device_name)
+    delete_device_state_from_state(state_id)
+    delete_state(state_id)
+    delete_history(state_id)
+
+    dev_id = get_device_id_from_name(device_name)
+
+    return redirect(url_for('db_handler.device_states_display', device_id=dev_id))
+
+
+
+@db_handler.route("/delete_device_db/", methods=["GET", "POST"])
+def delete_device_db():
+    device_name = request.args.get("device_name")
+    print("deleting ", device_name)
+    dev_id = get_device_id_from_name(device_name)
+    device_states = get_dev_states_by_device_id(dev_id)
+    if not device_states:
+        print("No states in DB for Device ", dev_id, device_name)
+        delete_device(dev_id)
+        return redirect(url_for('db_handler.search'))
+    for state_id in device_states:
+        delete_state(state_id[0])
+        delete_history(state_id[0])
+        #delete device states last to maintain connection
+        delete_all_dev_states(dev_id)
+    delete_device(dev_id)
+    return redirect(url_for('db_handler.search'))
 
 def get_beamline(device_name):
     session = Session()
@@ -520,6 +602,12 @@ def get_device_name_from_id(device_id):
     session.close()
     return name[0] if name else None
 
+def get_device_id_from_name(device_name):
+    session = Session()
+    id = session.query(Devices.device_id).filter(Devices.name==device_name).one()
+    session.close()
+    return id[0] if id else None
+
 def get_device_names():
     """
     Gets a list of all device names from the database
@@ -553,6 +641,55 @@ def get_dev_states_by_device_id(device_id=None):
         device_states = session.query(DeviceStates.state_id).all()
     session.close()
     return device_states if device_states else None
+
+
+def delete_device(device_id):
+    session = Session()
+    to_delete = session.query(Devices).filter(Devices.device_id==device_id).first()
+    print("Deleting device ", device_id)
+    session.delete(to_delete)
+    session.commit()
+    session.close()
+    return
+
+def delete_device_state_from_state(state_id):
+    session = Session()
+    to_delete = session.query(DeviceStates).filter(DeviceStates.state_id==state_id).first()
+    print("Deleting device state for ", state_id)
+    session.delete(to_delete)
+    session.commit()
+    session.close()
+    return
+
+def delete_history(state_id):
+    session = Session()
+    history = session.query(History).filter(History.state_id == state_id).all()
+    print("Deleting history for ", state_id)
+    for history_record in history:
+        session.delete(history_record)
+    session.commit()
+    session.close()
+    return
+
+def delete_all_dev_states(device_id):
+    session = Session()
+    all_dev_states = session.query(DeviceStates).filter(DeviceStates.device_id==device_id).all()
+    for dev_state in all_dev_states:
+        print("Deleting device state ", device_id, dev_state)
+        #perform lookup to get device_state object? Or will this just work
+        session.delete(dev_state)
+    session.commit()
+    session.close()
+    return 
+
+def delete_state(state_id):
+    session = Session()
+    print("Deleting state id ", state_id)
+    to_delete = session.query(States).filter(States.id==state_id).first()
+    session.delete(to_delete)
+    session.commit()
+    session.close()
+    return
 
 def insert_autosheet(filename):
     """
@@ -597,7 +734,6 @@ def handle_state(session, state_name, state):
     """
     #Swap dashes with None, clear out empty elements/strings in list
     state = ['' if sub == '-' else sub for sub in state]
-    #TODO: check if state name exists
     state_obj = create_state_object(state_name, state)
     nBC = state[3]
     neV = state[4]
