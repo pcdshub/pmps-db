@@ -6,7 +6,7 @@
   <div class="container-fluid border">
     <div class="row">
       {% if not all_states %}
-        <div class="col">
+        <div class="col-6">
           <form action="/add_state/">
             <input type="hidden" name="device_name" value="{{ state_content['device_name'] }}"></input>
             <button class="btn btn-outline-light btn-primary" name="State" type="submit">New State</button>
@@ -16,6 +16,9 @@
           <h5>Device ID: 
             <input disabled name="device_name" value="{{ state_content['device_name'] }}"></input>
           </h5> 
+        </div>
+        <div class="col">
+            <button class="btn btn-outline-light btn-danger" name="delete" data-bs-toggle="modal" data-bs-target="#deleteDeviceModal">Delete Device</button>
         </div>
       {% endif %}
     </div>
@@ -78,6 +81,28 @@
           {% endfor %}
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <div class="modal fade" id="deleteDeviceModal" role="dialog">
+    <div class="modal-dialog w-50 mw-100">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Delete Device</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Warning! This will delete the device " {{ state_content['device_name'] }} " and all associated states. THIS CANNOT BE UNDONE.</p>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <form action="/delete_device_db/">
+              <input type="hidden" name="device_name" value="{{ state_content['device_name'] }}"></input>
+              <button class="btn btn-danger" name="deletedev" type="submit"> Delete Device </button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 {% endblock %}
