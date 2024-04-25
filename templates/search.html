@@ -18,9 +18,11 @@
           <h5>Select a Device</h5>
           <div class="input-group">
             <SELECT class="form-select" name="device_id">
-            {% for d in devices %}
-              <OPTION value={{d[0]}} class="dropdown"> {{d[1]}}</OPTION>
-            {% endfor %}
+            {% if devices != None %}
+              {% for d in devices %}
+                <OPTION value={{d[0]}} class="dropdown"> {{d[1]}}</OPTION>
+              {% endfor %}
+            {% endif %}
             </SELECT>
             <button class="btn btn-light btn-outline-dark" name="device_state_button" type="submit">Get States</button>
           </div>

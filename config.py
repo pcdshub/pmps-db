@@ -7,10 +7,10 @@ form_defaults = {
 }
 
 #Pulled from Autosheet 1/19/23
-access_groups = ["KFE", "RIX", "TMO"]
+access_groups = ["KFE", "RIX", "TMO", "LFE"]
 beamlines = {
     "SXR": ["KFE", "RIX", "TMO"], 
-    "HXR":[]
+    "HXR":["LFE"]
     }
 device_types = ["ATM", "B4C/Si MIRROR", "EXS YAG", "GAS ATTEN", "LASER INCOUPLING", "PPM", "REF LASER", "RTDS", "SCATTER SLIT", "WFS TARGET", "XPIM", "SPECTROMETER", "OTHER"]
 plcs = ["plc-kfe-gatt", "plc-kfe-motion", "plc-kfe-rix-motion", "plc-rixs-optics", "plc-tmo-motion", "plc-tmo-optics"]
