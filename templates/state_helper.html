@@ -39,7 +39,7 @@
             Adding New State for Device:
           </div>
           <div class="col-sm-2">
-            <input type="text" name="s_beam" value="{{ state_content['beamline'] }}" readonly>
+            <input type="text" value="{{ state_content['device_name'] }}" readonly>
           </div>
         </div>
   {% endif %}
@@ -153,14 +153,18 @@
                     {% for ev_value in config.form_defaults['neVRange'] %}
                     <input type="checkbox" class="btn-check" value="1" name="ev-{{ loop.index0 }}-val" id="ev-{{ loop.index0 }}" {{ "checked" if ev_value=="1" }} autocomplete="off" />
                     <label class="btn-color btn-outline-light btn" style="font-size: 12px; padding: 0; width: {{ 80/config.form_defaults['neVRange'] | length }}%;" for="ev-{{ loop.index0 }}">
-                      {{config.ev_ranges['SXR'][config.form_defaults['neVRange'] | length - loop.index0 - 1 ]}}<br>
+                      {% if state_content['beamline'] in config.beamlines['SXR'] %}
+                        {{config.ev_ranges['SXR'][config.form_defaults['neVRange'] | length - loop.index0 - 1 ]}}<br>
+                      {% else %}
+                        {{config.ev_ranges['HXR'][config.form_defaults['neVRange'] | length - loop.index0 - 1 ]}}<br>
+                      {% endif %}
                     </label>
                     {% endfor %}
                   {% else %}
                     {% for ev_value in state_content['states']['neVRange'] %}
                         <input type="checkbox" class="btn-check" value="1" name="ev-{{ loop.index0 }}-val" id="ev-{{ loop.index0 }}" {{ "checked" if ev_value=="1" }} autocomplete="off" />
                         <label class="btn-color btn-outline-light btn" style="font-size: 12px; padding: 0; width: {{ 80/state_content['states']['neVRange'] | length }}%;" for="ev-{{ loop.index0 }}">
-                        {% if state_content['states']['beamline'] in config.beamlines['SXR'] %}
+                        {% if state_content['beamline'] in config.beamlines['SXR'] %}
                           {{ config.ev_ranges['SXR'][state_content['states']['neVRange'] | length - loop.index0 - 1 ]}}<br>
                         {% else %}
                           {{ config.ev_ranges['HXR'][state_content['states']['neVRange'] | length - loop.index0 - 1 ]}}<br>
@@ -171,7 +175,7 @@
                 </div>
               </td>
               <td>
-                {% if state_content['states']['beamline'] in config.beamlines['SXR'] %}
+                {% if state_content['beamline'] in config.beamlines['SXR'] %}
                   <label>SXR</label>
                 {% else %}
                   <label>HXR</label>

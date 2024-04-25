@@ -153,10 +153,9 @@ def state_search_results():
         session.close()    
         return render_template('state_table.html', state_content=format_state(results), all_states=True)
     results = session.query(States).filter(States.name.contains(state_string)).all()
+    session.close()    
     if not results:
-        session.close()    
         return redirect(url_for('db_handler.search'))
-    session.close()
     return render_template('state_table.html', state_content=format_state(results), all_states=True)
 
 @db_handler.route('/device_search_results/', methods=["GET", "POST"])
@@ -171,10 +170,9 @@ def device_search_results():
         session.close()    
         return render_template('all_devices.html', device_content=format_device(results))
     results = session.query(Devices).filter(Devices.name.contains(dev_string)).order_by(Devices.name)
-    if not results:
-        session.close()    
-        return render_template('all_devices.html', device_content=format_device(results))
     session.close()    
+    if not results:
+        return render_template('all_devices.html', device_content=format_device(results))
     return render_template('all_devices.html', device_content=format_device(results))
 
 @db_handler.route('/devices_by_type/', methods=["POST"])
@@ -590,11 +588,13 @@ def get_state_by_id(state_id):
 def get_devices():
     """
     Gets a list of all device ids, names, and plcs from the database
+
+    Returns: list of devices, or empty list if None
     """
     session = Session()
     devices = session.query().with_entities(Devices.device_id, Devices.name, Devices.device_type, Devices.plc).order_by(Devices.name).all()
     session.close()
-    return devices if devices else None
+    return devices if devices else []
 
 def get_device_name_from_id(device_id):
     session = Session()
