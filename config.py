@@ -12,7 +12,7 @@ beamlines = {
     "SXR": ["KFE", "RIX", "TMO"], 
     "HXR":["LFE"]
     }
-device_types = ["ATM", "B4C/Si MIRROR", "EXS YAG", "GAS ATTEN", "LASER INCOUPLING", "PPM", "REF LASER", "RTDS", "SCATTER SLIT", "WFS TARGET", "XPIM", "SPECTROMETER", "OTHER"]
+device_types = ["ATM", "B4C/Ni MIRROR", "B4C/Si MIRROR", "EXS YAG", "GAS ATTEN", "LASER INCOUPLING", "PPM", "REF LASER", "RTDS", "SCATTER SLIT", "WFS TARGET", "XPIM", "SPECTROMETER", "OTHER"]
 plcs = ["plc-kfe-gatt", "plc-kfe-motion", "plc-kfe-rix-motion", "plc-rixs-optics", "plc-tmo-motion", "plc-tmo-optics", "plc-lfe-optics", "plc-xrt-homs", "plc-txi-hxr-optics"]
 
 #Confluence
