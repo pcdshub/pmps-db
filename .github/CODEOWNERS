@@ -2,12 +2,12 @@
 * @pcdshub/pmps-sme
 
 ## PYTHON files
-*.py @pcdshub/python-reviewers
-*.pyi @pcdshub/python-reviewers
-*.pyc @pcdshub/python-reviewers
-*.pyw @pcdshub/python-reviewers
-*.pyx @pcdshub/python-reviewers
-*.pyd @pcdshub/python-reviewers
+*.py @pcdshub/python-reviewers @pcdshub/pmps-sme
+*.pyi @pcdshub/python-reviewers @pcdshub/pmps-sme
+*.pyc @pcdshub/python-reviewers @pcdshub/pmps-sme
+*.pyw @pcdshub/python-reviewers @pcdshub/pmps-sme
+*.pyx @pcdshub/python-reviewers @pcdshub/pmps-sme
+*.pyd @pcdshub/python-reviewers @pcdshub/pmps-sme
 
 # github folder holds administrative files
 .github/** @pcdshub/software-admin
