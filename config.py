@@ -7,7 +7,7 @@ form_defaults = {
 }
 
 #Pulled from Autosheet 1/19/23
-access_groups = ["KFE", "RIX", "TMO", "LFE", "TXI-SXR", "TXI-HXR",]
+access_groups = ["KFE", "RIX", "TMO", "LFE", "TXI-SXR", "TXI-HXR", "XPP",]
 beamlines = {
     "SXR": ["KFE", "RIX", "TMO", "TXI-SXR",],
     "HXR": ["LFE", "TXI-HXR", "XPP"]
