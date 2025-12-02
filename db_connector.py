@@ -14,6 +14,10 @@ from sqlalchemy import insert
 
 import pprint, json, datetime, traceback
 
+from pmpsdb_client.cli.parser import create_parser
+from pmpsdb_client.cli.transfer_tools import cli_upload_file
+from pmpsdb_client.cli.epics_tools import cli_reload_parameters
+
 db_handler = Blueprint('db_handler', __name__, template_folder='templates')
 
 @db_handler.route("/populate/", methods=["POST"])
@@ -85,16 +89,24 @@ def export_by_plc():
     }
     """
     plc = request.form.get('plc_select')
-    export_file = "export/exported_" + plc + "-" + str(datetime.datetime.now().isoformat()) + ".json"
-    devices = get_devices_by_plc(plc)
-    if not devices:
-        return render_template("config.html", message="Export Failed - No Device Information")
-    export = get_export_data_by_device_ids(devices)
-    plc_export = {plc:export}
-    with open(export_file, 'w') as f:
-        f.write(json.dumps(plc_export))
-    #return send_file(export_file, as_attachment=True)
-    message = plc + " Export Successful!"
+    if request.form["PLC"] == "export":
+        export_file = "export/exported_" + plc + "-" + str(datetime.datetime.now().isoformat()) + ".json"
+        devices = get_devices_by_plc(plc)
+        if not devices:
+            return render_template("config.html", message="Export Failed - No Device Information")
+        export = get_export_data_by_device_ids(devices)
+        plc_export = {plc:export}
+        with open(export_file, 'w') as f:
+            f.write(json.dumps(plc_export))
+        #return send_file(export_file, as_attachment=True)
+        upload_ret = cli_upload_file(create_parser().parse_args(f"upload-to {plc} --local-file {export_file}".split()))
+        message = plc + f" Export Successful! Upload to plc {bool(upload_ret) * 'un'}successful."
+    elif request.form["PLC"] == "reload":
+        reload_ret = cli_reload_parameters(create_parser().parse_args(f"reload {plc}".split()))
+        if reload_ret:
+            message = "Reload unsuccessful. Use pmpsdb_client to reload the database."
+        else:
+            message = "Reload successful."
     return export_page(message)
 
 @db_handler.route("/export_all/", methods=["GET"])
