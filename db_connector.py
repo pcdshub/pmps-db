@@ -8,6 +8,7 @@ from models.device_states import DeviceStates
 from models.history import History
 
 from flask import render_template, Blueprint, request, redirect, url_for, send_file
+from werkzeug.exceptions import BadRequest
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import insert
@@ -75,6 +76,10 @@ def get_plcs():
         formatted_plcs.append(temp[0])
     return formatted_plcs
 
+@db_handler.errorhandler(BadRequest)
+def handle_bad_export(e):
+    return 'export_plc posted without export or reload value', 400
+
 @db_handler.route("/export_plc/", methods=["GET", "POST"])
 def export_by_plc():
     """
@@ -107,6 +112,9 @@ def export_by_plc():
             message = "Reload unsuccessful. Use pmpsdb_client to reload the database."
         else:
             message = "Reload successful."
+    else:
+        handle_bad_export()
+
     return export_page(message)
 
 @db_handler.route("/export_all/", methods=["GET"])
