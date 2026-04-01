@@ -104,8 +104,10 @@ def export_by_plc():
         with open(export_file, 'w') as f:
             f.write(json.dumps(plc_export))
         #return send_file(export_file, as_attachment=True)
-        upload_ret = cli_upload_file(create_parser().parse_args(f"upload-to {plc} --local-file {export_file}".split()))
-        message = plc + f" Export Successful! Upload to plc {bool(upload_ret) * 'un'}successful."
+        message = f"{plc} export successful!"
+    elif request.form["PLC"] == "download":
+        upload_ret = cli_upload_file(create_parser().parse_args(f"upload-to {plc}".split()))
+        message = f"Upload to {plc} {bool(upload_ret) * 'un'}successful."
     elif request.form["PLC"] == "reload":
         reload_ret = cli_reload_parameters(create_parser().parse_args(f"reload {plc}".split()))
         if reload_ret:
