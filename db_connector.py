@@ -77,10 +77,10 @@ def get_plcs():
     return formatted_plcs
 
 @db_handler.errorhandler(BadRequest)
-def handle_bad_export(e):
-    return 'export_plc posted without export or reload value', 400
+def handle_bad_request(e):
+    return e.description, 400
 
-@db_handler.route("/export_plc/", methods=["GET", "POST"])
+@db_handler.route("/export_plc/", methods=["POST"])
 def export_by_plc():
     """
     Builds a dictionary of one plc's device_ids and their state information and converts
@@ -94,6 +94,7 @@ def export_by_plc():
     }
     """
     plc = request.form.get('plc_select')
+    message = 'Message unset'
     if request.form["PLC"] == "export":
         export_file = "export/exported_" + plc + "-" + str(datetime.datetime.now().isoformat()) + ".json"
         devices = get_devices_by_plc(plc)
@@ -115,7 +116,7 @@ def export_by_plc():
         else:
             message = "Reload successful."
     else:
-        handle_bad_export()
+        raise BadRequest(description=f'export_plc posted with unhandled value {request.form["PLC"]}')
 
     return export_page(message)
 
