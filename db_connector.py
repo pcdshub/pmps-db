@@ -11,7 +11,7 @@ from flask import render_template, Blueprint, request, redirect, url_for, send_f
 from werkzeug.exceptions import BadRequest
 
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import insert
+from sqlalchemy import insert, or_
 
 import pprint, json, datetime, traceback
 
@@ -172,7 +172,7 @@ def state_search_results():
         results = session.query(States).all()
         session.close()    
         return render_template('state_table.html', state_content=format_state(results), all_states=True)
-    results = session.query(States).filter(States.name.contains(state_string)).all()
+    results = session.query(States).filter(or_(States.name.contains(state_string), States.id.contains(state_string))).all()
     session.close()    
     if not results:
         return redirect(url_for('db_handler.search'))
@@ -189,7 +189,7 @@ def device_search_results():
         results = session.query(Devices).order_by(Devices.name).all()
         session.close()    
         return render_template('all_devices.html', device_content=format_device(results))
-    results = session.query(Devices).filter(Devices.name.contains(dev_string)).order_by(Devices.name)
+    results = session.query(Devices).filter(or_(Devices.name.contains(dev_string), Devices.device_id.contains(dev_string))).order_by(Devices.name)
     session.close()    
     if not results:
         return render_template('all_devices.html', device_content=format_device(results))
