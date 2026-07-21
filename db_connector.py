@@ -8,11 +8,16 @@ from models.device_states import DeviceStates
 from models.history import History
 
 from flask import render_template, Blueprint, request, redirect, url_for, send_file
+from werkzeug.exceptions import BadRequest
 
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import insert
+from sqlalchemy import insert, or_
 
 import pprint, json, datetime, traceback
+
+from pmpsdb_client.cli.parser import create_parser
+from pmpsdb_client.cli.transfer_tools import cli_upload_file
+from pmpsdb_client.cli.epics_tools import cli_reload_parameters
 
 db_handler = Blueprint('db_handler', __name__, template_folder='templates')
 
@@ -71,7 +76,11 @@ def get_plcs():
         formatted_plcs.append(temp[0])
     return formatted_plcs
 
-@db_handler.route("/export_plc/", methods=["GET", "POST"])
+@db_handler.errorhandler(BadRequest)
+def handle_bad_request(e):
+    return e.description, 400
+
+@db_handler.route("/export_plc/", methods=["POST"])
 def export_by_plc():
     """
     Builds a dictionary of one plc's device_ids and their state information and converts
@@ -85,16 +94,30 @@ def export_by_plc():
     }
     """
     plc = request.form.get('plc_select')
-    export_file = "export/exported_" + plc + "-" + str(datetime.datetime.now().isoformat()) + ".json"
-    devices = get_devices_by_plc(plc)
-    if not devices:
-        return render_template("config.html", message="Export Failed - No Device Information")
-    export = get_export_data_by_device_ids(devices)
-    plc_export = {plc:export}
-    with open(export_file, 'w') as f:
-        f.write(json.dumps(plc_export))
-    #return send_file(export_file, as_attachment=True)
-    message = plc + " Export Successful!"
+    message = 'Message unset'
+    if request.form["PLC"] == "export":
+        export_file = "export/exported_" + plc + "-" + str(datetime.datetime.now().isoformat()) + ".json"
+        devices = get_devices_by_plc(plc)
+        if not devices:
+            return render_template("config.html", message="Export Failed - No Device Information")
+        export = get_export_data_by_device_ids(devices)
+        plc_export = {plc:export}
+        with open(export_file, 'w') as f:
+            f.write(json.dumps(plc_export))
+        #return send_file(export_file, as_attachment=True)
+        message = f"{plc} export successful!"
+    elif request.form["PLC"] == "download":
+        upload_ret = cli_upload_file(create_parser().parse_args(f"upload-to {plc}".split()))
+        message = f"Upload to {plc} {bool(upload_ret) * 'un'}successful."
+    elif request.form["PLC"] == "reload":
+        reload_ret = cli_reload_parameters(create_parser().parse_args(f"reload {plc}".split()))
+        if reload_ret:
+            message = "Reload unsuccessful. Use pmpsdb_client to reload the database."
+        else:
+            message = "Reload successful."
+    else:
+        raise BadRequest(description=f'export_plc posted with unhandled value {request.form["PLC"]}')
+
     return export_page(message)
 
 @db_handler.route("/export_all/", methods=["GET"])
@@ -152,7 +175,7 @@ def state_search_results():
         results = session.query(States).all()
         session.close()    
         return render_template('state_table.html', state_content=format_state(results), all_states=True)
-    results = session.query(States).filter(States.name.contains(state_string)).all()
+    results = session.query(States).filter(or_(States.name.contains(state_string), States.id.contains(state_string))).all()
     session.close()    
     if not results:
         return redirect(url_for('db_handler.search'))
@@ -169,7 +192,7 @@ def device_search_results():
         results = session.query(Devices).order_by(Devices.name).all()
         session.close()    
         return render_template('all_devices.html', device_content=format_device(results))
-    results = session.query(Devices).filter(Devices.name.contains(dev_string)).order_by(Devices.name)
+    results = session.query(Devices).filter(or_(Devices.name.contains(dev_string), Devices.device_id.contains(dev_string))).order_by(Devices.name)
     session.close()    
     if not results:
         return render_template('all_devices.html', device_content=format_device(results))
